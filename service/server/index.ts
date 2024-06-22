@@ -48,7 +48,7 @@ app.use(async (ctx, next) => {
 const router = new Router();
 
 
-router.get("/webhook/nft", async (ctx) => {
+router.post("/webhook/nft", async (ctx) => {
     const data = ctx.request.body
     console.log(data)
     // ctx.body = await listProposals(space, parseInt(limit || "50"), parseInt(offset || "0"))

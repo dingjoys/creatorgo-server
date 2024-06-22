@@ -51,10 +51,10 @@ router.post("/webhook/nft", async (ctx) => {
     // const data = ctx.request.body
     const { headers, body } = ctx.request;
 
-    Moralis.Streams.verifySignature({
-        body,
-        signature: headers["x-signature"],
-    }); // throws error if not valid
+    // Moralis.Streams.verifySignature({
+    //     body,
+    //     signature: headers["x-signature"],
+    // }); // throws error if not valid
 
 
     console.log(body)

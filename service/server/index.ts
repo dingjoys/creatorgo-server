@@ -7,10 +7,9 @@ import json from 'koa-json';
 import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
-import { validate } from '../strategies';
-import { listProposals, listVotes, listVotesByOwner, proposal, vote } from '../service/proposals';
-import { ethers, utils } from 'ethers';
-import { DefaultError, DefaultResponse } from '../lib/utils';
+import { DefaultResponse } from '../lib/utils';
+const Moralis = require("moralis").default;
+
 dotenv.config();
 
 const app = new Koa()

@@ -1,0 +1,9 @@
+{
+  "name": "Gas Hero Age",
+  "cover": "https://oss.metopia.xyz/imgs/aave-cred-icon-hd.png",
+  "networks": [8453],
+  "category": ["GasHero"],
+  "link": "https://app.aave.com/",
+  "eligibility": "Created Gas Hero Account",
+  "criteriaDetails": "# account age since the first transaction"
+}

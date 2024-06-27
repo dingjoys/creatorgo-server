@@ -5,7 +5,7 @@ import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
-import { bulkCreateNftTransfers } from '../service/nftLogs';
+import { bulkCreateNftTransfers } from '../service/nftLogService';
 const zlib = require('zlib');
 
 dotenv.config();
@@ -50,7 +50,6 @@ router.post("/webhook/zora", async (ctx) => {
                 });
             });
             const data = JSON.parse(body)
-            console.log("DEBUG", data)
             data.forEach(d => {
                 bulkCreateNftTransfers(d)
             })

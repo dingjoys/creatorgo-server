@@ -29,18 +29,18 @@ router.post("/webhook/nft", async (ctx) => {
 
 router.post("/webhook/zora", async (ctx) => {
     const { headers, body } = ctx.request;
-    console.log(body)
+    console.log(headers, body)
     try {
         let body = ""
         if (ctx.request.headers['content-encoding'] === 'gzip') {
             body = await new Promise((resolve, reject) => {
-                let data = '';
+                const chunks: any[] = [];
                 ctx.req.on('data', chunk => {
-                    data += chunk;
+                    console.log(typeof chunk, chunk.length)
+                    chunks.push(chunk);
                 });
                 ctx.req.on('end', () => {
-                    console.log(data)
-                    const buffer = Buffer.from(data);
+                    const buffer = Buffer.concat(chunks);
                     zlib.gunzip(buffer, (err, decoded) => {
                         if (err) {
                             reject(err);

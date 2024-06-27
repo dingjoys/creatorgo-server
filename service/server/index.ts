@@ -50,6 +50,7 @@ router.post("/webhook/zora", async (ctx) => {
                 });
             });
             const data = JSON.parse(body)
+            console.log("DEBUG", data)
             data.forEach(d => {
                 bulkCreateNftTransfers(d)
             })

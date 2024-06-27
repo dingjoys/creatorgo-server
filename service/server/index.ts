@@ -14,8 +14,8 @@ dotenv.config();
 
 const app = new Koa()
 onerror(app)
-app.use(compress());
-app.use(bodyparser())
+// app.use(compress());
+// app.use(bodyparser())
 app.use(logger())
 
 const router = new Router();
@@ -28,7 +28,8 @@ router.post("/webhook/nft", async (ctx) => {
 })
 
 router.post("/webhook/zora", async (ctx) => {
-    const { headers, } = ctx.request;
+    const { headers, body } = ctx.request;
+    console.log(body)
     try {
         let body = ""
         if (ctx.request.headers['content-encoding'] === 'gzip') {
@@ -38,6 +39,7 @@ router.post("/webhook/zora", async (ctx) => {
                     data += chunk;
                 });
                 ctx.req.on('end', () => {
+                    console.log(data)
                     const buffer = Buffer.from(data);
                     zlib.gunzip(buffer, (err, decoded) => {
                         if (err) {

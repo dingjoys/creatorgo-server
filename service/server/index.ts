@@ -6,6 +6,7 @@ import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
+const zlib = require('zlib');
 const compress = require('koa-compress');
 const Moralis = require("moralis").default;
 
@@ -28,19 +29,33 @@ router.post("/webhook/nft", async (ctx) => {
 
 router.post("/webhook/zora", async (ctx) => {
     const { headers, } = ctx.request;
+    const contentEncoding = ctx.request.headers['content-encoding'];
     try {
-        const body = await new Promise((resolve, reject) => {
-            let data = '';
-            ctx.req.on('data', chunk => {
-                data += chunk;
+        let body = '';
+        if (contentEncoding === 'gzip') {
+            body = await new Promise((resolve, reject) => {
+                zlib.gunzip(ctx.req, (err, data) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(data.toString());
+                    }
+                });
             });
-            ctx.req.on('end', () => {
-                resolve(data);
+        } else {
+            body = await new Promise((resolve, reject) => {
+                let data = '';
+                ctx.req.on('data', chunk => {
+                    data += chunk;
+                });
+                ctx.req.on('end', () => {
+                    resolve(data);
+                });
+                ctx.req.on('error', err => {
+                    reject(err);
+                });
             });
-            ctx.req.on('error', err => {
-                reject(err);
-            });
-        });
+        }
         console.log('Received webhook payload:', body);
         // console.log(headers, body, ctx.request)
         ctx.status = 200; // 设置响应状态码为 200 表示成功接收

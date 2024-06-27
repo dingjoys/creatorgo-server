@@ -6,13 +6,14 @@ import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
+const compress = require('koa-compress');
 const Moralis = require("moralis").default;
 
 dotenv.config();
 
 const app = new Koa()
 onerror(app)
-
+app.use(compress());
 app.use(bodyparser())
 app.use(logger())
 

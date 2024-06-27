@@ -26,14 +26,13 @@ router.post("/webhook/nft", async (ctx) => {
 })
 
 router.post("/webhook/zora", async (ctx) => {
-    const { headers, body } = ctx.request;
+    const { headers } = ctx.request;
     try {
         let body = ""
         if (ctx.request.headers['content-encoding'] === 'gzip') {
             body = await new Promise((resolve, reject) => {
                 const chunks: any[] = [];
                 ctx.req.on('data', chunk => {
-                    console.log(typeof chunk, chunk.length)
                     chunks.push(chunk);
                 });
                 ctx.req.on('end', () => {
@@ -50,8 +49,10 @@ router.post("/webhook/zora", async (ctx) => {
                     reject(err);
                 });
             });
-
-            bulkCreateNftTransfers(JSON.parse(body))
+            const data = JSON.parse(body)
+            data.forEach(d => {
+                bulkCreateNftTransfers(d)
+            })
         } else {
             body = await new Promise((resolve, reject) => {
                 let data = '';

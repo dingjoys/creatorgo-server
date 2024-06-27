@@ -15,6 +15,9 @@ type QuicknodeStreamLogsRawData = {
 export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) => {
     if (raw.length) {
         const data = raw.map(r => {
+            if (!r.amount) {
+                console.log(r.amount)
+            }
             return {
                 "amount": numberishToBinary(r.amount),
                 "block_number": r.block_number,
@@ -23,13 +26,13 @@ export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) 
                 "hash": hexStringToBinary(r.hash),
                 "log_index": r.log_index,
                 "to": hexStringToBinary(r.to),
-                "token_id": r.token_id
+                "token_id": numberishToBinary(r.token_id)  
             }
         })
         try {
             await NftTransfer.bulkCreate(data, {
                 ignoreDuplicates: true
-            }).then(res=>{
+            }).then(res => {
                 console.log(`inserted: ${data.length} rows`)
             })
         } catch (e) {

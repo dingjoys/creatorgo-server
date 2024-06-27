@@ -1,9 +1,7 @@
 
 import * as dotenv from 'dotenv';
-import cors from "kcors";
 import Koa from 'koa';
 import bodyparser from 'koa-bodyparser';
-import json from 'koa-json';
 import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
@@ -51,14 +49,12 @@ router.post("/webhook/nft", async (ctx) => {
     ctx.body = DefaultResponse()
 })
 
-type NFTTransfer = [
-
-]
 router.post("/webhook/zora", async (ctx) => {
     const { headers, body } = ctx.request;
 
-    console.log(headers, body)
-    ctx.body = DefaultResponse()
+    console.log(headers, body, ctx.request)
+    ctx.status = 200; // 设置响应状态码为 200 表示成功接收
+    ctx.body = 'Webhook received successfully'; // 返回一个响应
 })
 
 

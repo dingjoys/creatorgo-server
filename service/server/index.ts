@@ -15,11 +15,8 @@ dotenv.config();
 const app = new Koa()
 onerror(app)
 
-app.use(cors());
 app.use(bodyparser())
-app.use(json())
 app.use(logger())
-// app.use(require('koa-static')(__dirname + '/public'))
 
 app.use(async (ctx, next) => {
     const start = new Date();
@@ -48,14 +45,7 @@ const router = new Router();
 
 
 router.post("/webhook/nft", async (ctx) => {
-    // const data = ctx.request.body
     const { headers, body } = ctx.request;
-
-    // Moralis.Streams.verifySignature({
-    //     body,
-    //     signature: headers["x-signature"],
-    // }); // throws error if not valid
-
 
     console.log(body)
     ctx.body = DefaultResponse()
@@ -65,7 +55,6 @@ type NFTTransfer = [
 
 ]
 router.post("/webhook/zora", async (ctx) => {
-    // const data = ctx.request.body
     const { headers, body } = ctx.request;
 
     console.log(headers, body)

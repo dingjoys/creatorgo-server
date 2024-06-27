@@ -5,10 +5,10 @@ const fs = require("fs");
 const path = require("path");
 const basename = path.basename(__filename);
 const dbConfig = {
-    username: "ding",
-    password: "ding950613",
-    database: "nfts_data_center_test",
-    host: "127.0.0.1",
+    username: "dingjoys",
+    password: "Metopia123!",
+    database: "zora_test",
+    host: "rm-j6cv4542164od9ozv.mysql.rds.aliyuncs.com",
     dialect: "mysql" as Dialect,
     dialectOptions: {
         charset: "utf8mb4"

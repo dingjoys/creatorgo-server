@@ -1,14 +1,12 @@
 
 import * as dotenv from 'dotenv';
 import Koa from 'koa';
-import bodyparser from 'koa-bodyparser';
 import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
+import { bulkCreateNftTransfers } from '../service/nftLogs';
 const zlib = require('zlib');
-const compress = require('koa-compress');
-const Moralis = require("moralis").default;
 
 dotenv.config();
 
@@ -29,7 +27,6 @@ router.post("/webhook/nft", async (ctx) => {
 
 router.post("/webhook/zora", async (ctx) => {
     const { headers, body } = ctx.request;
-    console.log(headers, body)
     try {
         let body = ""
         if (ctx.request.headers['content-encoding'] === 'gzip') {
@@ -53,6 +50,8 @@ router.post("/webhook/zora", async (ctx) => {
                     reject(err);
                 });
             });
+
+            bulkCreateNftTransfers(JSON.parse(body))
         } else {
             body = await new Promise((resolve, reject) => {
                 let data = '';
@@ -66,11 +65,10 @@ router.post("/webhook/zora", async (ctx) => {
                     reject(err);
                 });
             });
+            throw Error(`invalid data - ${body}`)
         }
-        console.log('Received webhook payload:', body);
-        // console.log(headers, body, ctx.request)
         ctx.status = 200; // 设置响应状态码为 200 表示成功接收
-        ctx.body = 'Webhook received successfully'; // 返回一个响应
+        ctx.body = `Webhook received successfully ${headers["batch-start-range"]}-${headers["batch-end-range"]}`; // 返回一个响应
     } catch (e) {
         console.error(e)
         ctx.status = 500

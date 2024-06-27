@@ -27,3 +27,33 @@ CREATE TABLE `votings` (
   UNIQUE KEY unique_key_name (voter, proposal_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
  
+
+drop table if exists nft_transfer;
+ CREATE TABLE `nft_transfer` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `from` binary(20) DEFAULT NULL,
+  `to` binary(20) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `block_number` int DEFAULT '0',
+  `hash` binary(32) DEFAULT NULL,
+  `contract` binary(20) DEFAULT NULL,
+  `token_id` bigint DEFAULT NULL,
+  `amount` int,
+  `log_index` int DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY contract_log (`contract`, log_index),
+  KEY `index_from` (`from`),
+  KEY `index_to` (`to`),
+  KEY `index_contract` (`contract`),
+  KEY `index_block_number`(`block_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ CREATE TABLE `nft_contract_metadata` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `contract` binary(20) DEFAULT NULL,
+  `minter` int,
+  `owner` address,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

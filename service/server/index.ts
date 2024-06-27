@@ -61,6 +61,17 @@ router.post("/webhook/nft", async (ctx) => {
     ctx.body = DefaultResponse()
 })
 
+type NFTTransfer = [
+
+]
+router.post("/webhook/zora", async (ctx) => {
+    // const data = ctx.request.body
+    const { headers, body } = ctx.request;
+
+    console.log(headers, body)
+    ctx.body = DefaultResponse()
+})
+
 
 app.use(router.routes());
 

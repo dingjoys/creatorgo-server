@@ -17,31 +17,7 @@ app.use(compress());
 app.use(bodyparser())
 app.use(logger())
 
-app.use(async (ctx, next) => {
-    const start = new Date();
-    try {
-        await next();
-    } catch (error: any) {
-        console.error(`APP-
-      ${JSON.stringify({ error })}-${error.stack}`
-        );
-        let code = 99
-        if (error.toString().indexOf("expire") > -1) {
-            return code = 104
-        }
-
-        ctx.body = {
-            code: error.code || code,
-            msg: error.msg || error.toString(),
-        };
-        return;
-    }
-    const ms = new Date().getTime() - start.getTime();
-    console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
-});
-
 const router = new Router();
-
 
 router.post("/webhook/nft", async (ctx) => {
     const { headers, body } = ctx.request;
@@ -51,11 +27,28 @@ router.post("/webhook/nft", async (ctx) => {
 })
 
 router.post("/webhook/zora", async (ctx) => {
-    const { headers, body } = ctx.request;
-
-    console.log(headers, body, ctx.request)
-    ctx.status = 200; // 设置响应状态码为 200 表示成功接收
-    ctx.body = 'Webhook received successfully'; // 返回一个响应
+    const { headers, } = ctx.request;
+    try {
+        const body = await new Promise((resolve, reject) => {
+            let data = '';
+            ctx.req.on('data', chunk => {
+                data += chunk;
+            });
+            ctx.req.on('end', () => {
+                resolve(data);
+            });
+            ctx.req.on('error', err => {
+                reject(err);
+            });
+        });
+        console.log('Received webhook payload:', body);
+        // console.log(headers, body, ctx.request)
+        ctx.status = 200; // 设置响应状态码为 200 表示成功接收
+        ctx.body = 'Webhook received successfully'; // 返回一个响应
+    } catch (e) {
+        console.error(e)
+        ctx.status = 500
+    }
 })
 
 

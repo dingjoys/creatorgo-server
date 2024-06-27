@@ -33,12 +33,12 @@ router.post("/webhook/zora", async (ctx) => {
         let body = ""
         if (ctx.request.headers['content-encoding'] === 'gzip') {
             body = await new Promise((resolve, reject) => {
-                const chunks: any[] = [];
+                let data = '';
                 ctx.req.on('data', chunk => {
-                    chunks.push(chunk);
+                    data += chunk;
                 });
                 ctx.req.on('end', () => {
-                    const buffer = Buffer.concat(chunks);
+                    const buffer = Buffer.from(data);
                     zlib.gunzip(buffer, (err, decoded) => {
                         if (err) {
                             reject(err);

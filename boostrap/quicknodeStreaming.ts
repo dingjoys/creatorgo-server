@@ -72,7 +72,7 @@ const main2 = (data) => {
     const result = []
     for (let logs of filteredData) {
         for (let log of logs) {
-            if (log.topics && (log.topics[0] == "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62" ||
+            if (log.topics && (log.topics[0] ==   "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62" ||
                 log.topics[0] == "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")) {
                 if (log.topics[0] == "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62") {
                     result.push({
@@ -80,11 +80,11 @@ const main2 = (data) => {
                         from: `0x${log.topics[2].substring(26)}`,
                         to: `0x${log.topics[3].substring(26)}`,
                         // token_id: log.data.substring(0,66),
-                        token_id: log.data.substring(0, 66).replace(/0x0+/, '0x'),
+                        token_id:  log.data.substring(0,66).replace(/0x0+/, '0x') ,
                         log_index: parseInt(log.logIndex) || 0,
                         hash: log.transactionHash,
                         block_number: parseInt(log.blockNumber),
-                        amount: parseInt(`0x${log.data.substring(66)}`.replace(/0x0+/, '0x'))
+                        amount: parseInt( `0x${log.data.substring(66)}`.replace(/0x0+/, '0x'))
                     })
                 } else {
                     result.push({
@@ -92,7 +92,7 @@ const main2 = (data) => {
                         from: `0x${log.topics[1].substring(26)}`,
                         to: `0x${log.topics[2].substring(26)}`,
                         // token_id: log.topics[3]?log.topics[3].replace(/^0+/, '0x'):null ,
-                        token_id: log.data.replace(/0x0+/, '0x'),
+                        token_id: log.data.replace(/0x0+/, '0x') ,
                         log_index: parseInt(log.logIndex) || 0,
                         hash: log.transactionHash,
                         block_number: parseInt(log.blockNumber),
@@ -102,5 +102,5 @@ const main2 = (data) => {
             }
         }
     }
-    return result
+    return result 
 }

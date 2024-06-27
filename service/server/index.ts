@@ -69,7 +69,8 @@ router.post("/webhook/zora", async (ctx) => {
             throw Error(`invalid data - ${body}`)
         }
         ctx.status = 200; // 设置响应状态码为 200 表示成功接收
-        ctx.body = `Webhook received successfully ${headers["batch-start-range"]}-${headers["batch-end-range"]}`; // 返回一个响应
+        console.log(`Webhook received successfully ${headers["batch-start-range"]}-${headers["batch-end-range"]}`)
+        ctx.body = `200`; // 返回一个响应
     } catch (e) {
         console.error(e)
         ctx.status = 500

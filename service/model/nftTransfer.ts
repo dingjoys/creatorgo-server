@@ -1,9 +1,9 @@
 "use strict";
 
-import { DataTypes, INTEGER, JSON, STRING } from "sequelize";
-import { quietSequelize, sequelize } from ".";
+import { DataTypes } from "sequelize";
+import { quietSequelize } from ".";
 
-export const NftTransfer = sequelize.define("", {
+export const NftTransfer = quietSequelize.define("", {
     id: {
         allowNull: false,
         autoIncrement: true,
@@ -31,7 +31,7 @@ export const NftTransfer = sequelize.define("", {
     token_id: {
         type: DataTypes.BLOB,
     },
-    log_index:{
+    log_index: {
         type: DataTypes.INTEGER,
     }
 }, {

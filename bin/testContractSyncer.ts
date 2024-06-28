@@ -1,8 +1,8 @@
+import { sleep } from "../service/lib/utils";
 import { syncNewContractInfos } from "../service/schedule/contractSyncer";
 
-const _main = () => {
-    while (syncNewContractInfos()) { 
-        
+const _main = async () => {
+    while (await syncNewContractInfos()) {
     }
 }
 

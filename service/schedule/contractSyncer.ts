@@ -7,9 +7,11 @@ import { nftContractMetadata } from "../model/nftContractMetadata"
 const ipfsHead = "https://metopia.quicknode-ipfs.com/ipfs"
 const fetchUri = (uri) => {
     if (uri.startsWith("ipfs://")) {
+        console.log(`${ipfsHead}/${uri.replace("ipfs://", "")}`)
         return axios.get(`${ipfsHead}/${uri.replace("ipfs://", "")}`).then(res => res.data)
     } else {
-        return axios.get(uri)
+        console.log(`${uri}`)
+        return axios.get(uri).then(res => res.data)
     }
 }
 

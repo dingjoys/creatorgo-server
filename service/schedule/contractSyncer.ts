@@ -64,14 +64,13 @@ export const syncNewContractInfos = async () => {
                     const contractURI = await contractObj.contractURI()
                     if (contractURI) {
                         const metadataRaw = await fetchUri(contractURI)
-                        console.log(metadataRaw)
                         metadata = JSON.stringify(metadataRaw)
                     }
                 }
                 catch (e) {
                     console.log(`error 4 - ${contract}`)
                 }
-
+                console.log("metadata", metadata)
                 await nftContractMetadata.create({
                     contract: hexStringToBinary(contract),
                     name,

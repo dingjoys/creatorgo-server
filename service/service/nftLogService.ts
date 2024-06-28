@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { hexStringToBinary, numberishToBinary } from "../lib/utils"
 import { NftTransfer } from "../model/nftTransfer"
 
@@ -15,6 +16,7 @@ type QuicknodeStreamLogsRawData = {
 export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) => {
     if (raw.length) {
         const data = raw.map(r => {
+            console.log(r.token_id)
             return {
                 "amount": r.amount,
                 "block_number": r.block_number,
@@ -23,7 +25,7 @@ export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) 
                 "hash": hexStringToBinary(r.hash),
                 "log_index": r.log_index,
                 "to": hexStringToBinary(r.to),
-                "token_id": numberishToBinary(r.token_id == "0x" ? 0 : r.token_id)
+                "token_id": numberishToBinary(r.token_id == "0x" ? 0 : BigNumber.from(r.token_id))
             }
         })
         try {

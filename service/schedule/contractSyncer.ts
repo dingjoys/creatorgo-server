@@ -13,15 +13,15 @@ const fetchUri = (uri) => {
     }
 }
 
-let currentIndex = 0
+let globalCurrentIndex = 0
 export const syncNewContractInfos = async () => {
     const provider = getProvider()
 
     const batchSize = 1000
     const contracts = (await sequelize.query(`
-             select distinct contract from nft_transfer limit ${currentIndex},${batchSize}
+             select distinct contract from nft_transfer limit ${globalCurrentIndex},${batchSize}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
-    console.log("length1 - ", contracts.length)
+    console.log("Looping - ", globalCurrentIndex, contracts?.length)
     if (contracts?.length) {
         const existed = (await quietSequelize.query(`
             select contract from nft_transfer where contract in (
@@ -29,7 +29,6 @@ export const syncNewContractInfos = async () => {
             )
        `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
         const notExisted = contracts.filter(c1 => existed.indexOf(c1) == -1)
-        console.log("LENGTH - ", notExisted.length)
         for (const contract of notExisted) {
             try {
                 const contractObj = new ethers.Contract(contract, nftAbi, provider)
@@ -75,27 +74,23 @@ export const syncNewContractInfos = async () => {
                     supply,
                     owner,
                     metadata
+                }, {
+                    ignoreDuplicates: true
                 })
 
-                // console.log(`created - ${contract} - ${{
-                //     contract: hexStringToBinary(contract),
-                //     name,
-                //     supply,
-                //     owner,
-                //     metadata
-                // }}`)
-                currentIndex++;
+                console.log(`finished - ${contract}`)
+                globalCurrentIndex++;
             } catch (e) {
                 console.error(e)
                 console.log(`failed - ${contract}`)
             }
             await sleep(1000)
         }
-        currentIndex += batchSize
+        return true
+    } else {
+        return false
     }
-
 }
-
 
 const nftAbi = [
     {
@@ -131,6 +126,24 @@ const nftAbi = [
             }
         ],
         "name": "uri",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }, {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenURI",
         "outputs": [
             {
                 "internalType": "string",

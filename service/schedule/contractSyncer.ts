@@ -83,7 +83,7 @@ export const syncNewContractInfos = async () => {
                 console.error(e)
                 console.log(`failed - ${contract}`)
             }
-            await sleep(1000)
+            await sleep(300)
         }
         return true
     } else {

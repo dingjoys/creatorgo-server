@@ -24,7 +24,7 @@ export const syncNewContractInfos = async () => {
     console.log("Looping - ", globalCurrentIndex, contracts?.length)
     if (contracts?.length) {
         const existed = (await quietSequelize.query(`
-            select contract from nft_transfer where contract in (
+            select contract from nft_contract_metadata where contract in (
         ${contracts.map(c => `'${c}'`).join(",")}
             )
        `))?.[0]?.map((c: any) => binaryToHexString(c.contract))

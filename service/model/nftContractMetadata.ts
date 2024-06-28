@@ -3,7 +3,7 @@
 import { DataTypes, INTEGER, STRING } from "sequelize";
 import { quietSequelize, sequelize } from ".";
 
-export const nftContractMetadata = sequelize.define("", {
+export const nftContractMetadata = quietSequelize.define("", {
     id: {
         allowNull: false,
         autoIncrement: true,

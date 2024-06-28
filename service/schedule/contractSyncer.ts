@@ -63,7 +63,9 @@ export const syncNewContractInfos = async () => {
                 try {
                     const contractURI = await contractObj.contractURI()
                     if (contractURI) {
-                        metadata = JSON.stringify(await fetchUri(contractURI))
+                        const metadataRaw = await fetchUri(contractURI)
+                        console.log(metadataRaw)
+                        metadata = JSON.stringify(metadataRaw)
                     }
                 }
                 catch (e) {

@@ -10,12 +10,12 @@ export const nftContractMetadata = quietSequelize.define("", {
         primaryKey: true,
         type: DataTypes.INTEGER
     },
-    name:{ type: STRING },
+    name: { type: STRING },
     contract: {
         type: DataTypes.BLOB,
     },
     owner: { type: DataTypes.BLOB, },
-    metadataUrl: { type: STRING },
+    metadata: { type: STRING },
     supply: { type: INTEGER }
 
 }, {

@@ -3,12 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "npx ts-node ./service/index.ts",
     "server": "npx ts-node ./service/server/index.ts",
-    "cacheGht": "npx ts-node ./service/schedule/cacheGht.ts",
-    "cacheBadge": "npx ts-node ./service/schedule/cacheBadge.ts",
-    "exportAllUsers": "npx ts-node ./service/bin/exportUserData.ts",
-    "testContractSyncer": "npx ts-node ./service/bin/testContractSyncer.ts"
+    "testContractSyncer": "npx ts-node ./bin/testContractSyncer.ts"
   },
   "jest": {
     "verbose": true,

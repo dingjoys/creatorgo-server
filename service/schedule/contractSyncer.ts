@@ -22,7 +22,7 @@ export const syncNewContractInfos = async () => {
         select distinct contract from nft_transfer limit 10,0
    `))
     const contracts = (await sequelize.query(`
-             select distinct contract from nft_transfer limit ${batchSize},${currentIndex}
+             select distinct contract from nft_transfer limit ${currentIndex},${batchSize}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
     console.log("length1 - ", contracts.length)
     if (contracts?.length) {

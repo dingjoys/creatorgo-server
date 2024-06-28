@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import { binaryToHexString, getProvider, sleep } from "../lib/utils"
+import { binaryToHexString, getProvider, hexStringToBinary, sleep } from "../lib/utils"
 import { sequelize } from "../model"
 import axios from 'axios'
 import { nftContractMetadata } from "../model/nftContractMetadata"
@@ -17,11 +17,11 @@ let currentIndex = 0
 export const syncNewContractInfos = async () => {
     const provider = getProvider()
 
-
     const batchSize = 1000
     const contracts = (await sequelize.query(`
              select distinct contract from nft_transfer limit ${batchSize},${currentIndex}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
+    console.log("length1 - ", contracts.length)
     if (contracts?.length) {
         const existed = (await sequelize.query(`
             select contract from nft_transfer where contract in (
@@ -29,12 +29,21 @@ export const syncNewContractInfos = async () => {
             )
        `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
         const notExisted = contracts.filter(c1 => existed.indexOf(c1) == -1)
+        console.log("LENGTH - ", notExisted.length)
         for (const contract of notExisted) {
             try {
-                const contractObj = new ethers.Contract(binaryToHexString(contract), nftAbi, provider)
+                const contractObj = new ethers.Contract(contract, nftAbi, provider)
                 const supply = parseInt((await contractObj.totalSupply())?.toString())
-                const name = parseInt((await contractObj.name())?.toString())
-                const owner = parseInt((await contractObj.owner())?.toString())
+                const name = await contractObj.name()
+
+                let owner: any = null
+                try {
+                    const tmp = await contractObj.owner()
+                    owner = hexStringToBinary(tmp)
+                } catch (e) {
+
+                }
+
                 let metadata = ""
                 try {
                     const contractURI = await contractObj.contractURI()
@@ -46,14 +55,20 @@ export const syncNewContractInfos = async () => {
 
                 }
                 await nftContractMetadata.create({
-                    contract,
+                    contract: hexStringToBinary(contract),
                     name,
                     supply,
                     owner,
                     metadata
                 })
 
-                console.log(`created - ${contract}`)
+                console.log(`created - ${contract} - ${{
+                    contract: hexStringToBinary(contract),
+                    name,
+                    supply,
+                    owner,
+                    metadata
+                }}`)
                 currentIndex++;
             } catch (e) {
                 console.error(e)

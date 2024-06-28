@@ -21,11 +21,10 @@ export const syncNewContractInfos = async () => {
     const contracts = (await sequelize.query(`
              select distinct contract from nft_transfer limit ${globalCurrentIndex},${batchSize}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
-    console.log("Looping - ", globalCurrentIndex, contracts?.length)
     if (contracts?.length) {
         const existed = (await quietSequelize.query(`
             select contract from nft_contract_metadata where contract in (
-        ${contracts.map(c => `'${c}'`).join(",")}
+        ${contracts.map(c => `x'${c.substring(2)}'`).join(",")}
             )
        `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
         const notExisted = contracts.filter(c1 => existed.indexOf(c1) == -1)

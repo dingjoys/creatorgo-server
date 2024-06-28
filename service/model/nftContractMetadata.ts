@@ -1,9 +1,9 @@
 "use strict";
 
 import { DataTypes, INTEGER, STRING } from "sequelize";
-import { quietSequelize } from ".";
+import { quietSequelize, sequelize } from ".";
 
-export const nftContractMetadata = quietSequelize.define("", {
+export const nftContractMetadata = sequelize.define("", {
     id: {
         allowNull: false,
         autoIncrement: true,

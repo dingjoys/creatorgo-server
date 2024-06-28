@@ -27,6 +27,7 @@ export const NftMintData = quietSequelize.define("", {
     },
     mint_count: { type: INTEGER },
     max_token_id: { type: BIGINT },
+    total_amount: { type: INTEGER },
     trace_id: { type: BIGINT },
 
 }, {

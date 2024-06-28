@@ -1,3 +1,5 @@
+import { hexStringToBinary } from "../lib/utils";
+import { nftContractMetadata as NftContractMetadata } from "../model/nftContractMetadata";
 import { hexString } from "../types";
 
 type Creator = {
@@ -19,6 +21,19 @@ export const leaderboard = () => {
 
 }
 
-export const calcScore = (address) => {
+export const getCreatorData = async (address) => {
+
+    const contracts = await NftContractMetadata.findAll({
+        where: {
+            owner: hexStringToBinary(address)
+        }
+    })
     
+
+
+
+}
+
+export const calcScore = (address) => {
+
 }

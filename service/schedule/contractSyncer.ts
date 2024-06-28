@@ -33,19 +33,19 @@ export const syncNewContractInfos = async () => {
                 const contractObj = new ethers.Contract(contract, nftAbi, provider)
 
                 let supply = 0
-                try {
-                    supply = parseInt((await contractObj.totalSupply())?.toString())
-                } catch (e) {
-                    console.log(`error 1 - ${contract}`)
-                }
+                // try {
+                //     supply = parseInt((await contractObj.totalSupply())?.toString())
+                // } catch (e) {
+                //     console.log(`error 1 - ${contract}`)
+                // }
 
                 let name: any = ""
-                try {
-                    name = await contractObj.name()
-                } catch (e) {
+                // try {
+                //     name = await contractObj.name()
+                // } catch (e) {
 
-                    console.log(`error 2 - ${contract}`)
-                }
+                //     console.log(`error 2 - ${contract}`)
+                // }
 
                 let owner: any = null
                 try {
@@ -57,17 +57,16 @@ export const syncNewContractInfos = async () => {
                 }
 
                 let metadata = ""
-                try {
-                    const contractURI = await contractObj.contractURI()
-                    if (contractURI) {
-                        const metadataRaw = await fetchUri(contractURI)
-                        metadata = JSON.stringify(metadataRaw)
-                    }
-                }
-                catch (e) {
-                    console.log(`error 4 - ${contract}`)
-                }
-                console.log("metadata", metadata)
+                // try {
+                //     const contractURI = await contractObj.contractURI()
+                //     if (contractURI) {
+                //         const metadataRaw = await fetchUri(contractURI)
+                //         metadata = JSON.stringify(metadataRaw)
+                //     }
+                // }
+                // catch (e) {
+                //     console.log(`error 4 - ${contract}`)
+                // }
                 await nftContractMetadata.create({
                     contract: hexStringToBinary(contract),
                     name,

@@ -84,6 +84,7 @@ CREATE TABLE `nft_mint_data` (
 create table creator (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `address` binary(20) DEFAULT NULL,
+  
   `score` int,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,

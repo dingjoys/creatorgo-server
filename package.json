@@ -7,7 +7,8 @@
     "server": "npx ts-node ./service/server/index.ts",
     "cacheGht": "npx ts-node ./service/schedule/cacheGht.ts",
     "cacheBadge": "npx ts-node ./service/schedule/cacheBadge.ts",
-    "exportAllUsers": "npx ts-node ./service/bin/exportUserData.ts"
+    "exportAllUsers": "npx ts-node ./service/bin/exportUserData.ts",
+    "testContractSyncer": "npx ts-node ./service/bin/testContractSyncer.ts"
   },
   "jest": {
     "verbose": true,

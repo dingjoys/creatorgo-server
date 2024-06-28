@@ -50,10 +50,18 @@ drop table if exists nft_transfer;
   KEY `index_block_number`(`block_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
- CREATE TABLE `nft_contract_metadata` (
+drop table if exists nft_contract_metadata;
+CREATE TABLE `nft_contract_metadata` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `contract` binary(20) DEFAULT NULL,
-  `minter` int,
-  `owner` address,
+  `name` varchar(255),
+  `owner` binary(20),
+  `metadataUrl` text,
+  `supply` int,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY index_contract (`contract`),
+  KEY `index_owner` (`owner`),
+  KEY `index_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

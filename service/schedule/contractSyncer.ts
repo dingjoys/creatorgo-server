@@ -78,7 +78,7 @@ export const syncNewContractInfos = async () => {
                     ignoreDuplicates: true
                 })
 
-                console.log(`finished - ${contract}`)
+                console.log(`finished - ${globalCurrentIndex} - ${contract}`)
                 globalCurrentIndex++;
             } catch (e) {
                 console.error(e)

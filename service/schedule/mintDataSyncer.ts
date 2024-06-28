@@ -8,7 +8,7 @@ export const syncMintData = async () => {
     const batchSize = 100
     const count = await NftTransfer.count()
     const sql = `
-        select * from ( select contract, count(*) as mint_count, max(token_id) as max_token_id from nft_transfer 
+        select contract, count(*) as mint_count, max(token_id) as max_token_id from nft_transfer 
         where \`from\`=x'0000000000000000000000000000000000000000'
         group by contract limit ${globalCurrentIndex},${batchSize} 
     `

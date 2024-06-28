@@ -13,7 +13,7 @@ const fetchUri = (uri) => {
     }
 }
 
-let globalCurrentIndex = 5
+let globalCurrentIndex = 0
 export const syncNewContractInfos = async () => {
     const provider = getProvider()
 

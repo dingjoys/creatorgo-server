@@ -15,21 +15,21 @@ import { quietSequelize, sequelize } from ".";
 // `updatedAt` datetime DEFAULT NULL,
 
 
-// export const nftMintData = quietSequelize.define("", {
-//     id: {
-//         allowNull: false,
-//         autoIncrement: true,
-//         primaryKey: true,
-//         type: DataTypes.INTEGER
-//     },
-//     contract: {
-//         type: DataTypes.BLOB,
-//     },
-//     mint_count: { type: INTEGER },
-//     max_token_id: { type: BIGINT },
-//     trace_id: { type: BIGINT }
+export const NftMintData = quietSequelize.define("", {
+    id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+    },
+    contract: {
+        type: DataTypes.BLOB,
+    },
+    mint_count: { type: INTEGER },
+    max_token_id: { type: BIGINT },
+    trace_id: { type: BIGINT },
 
-// }, {
-//     // modelName:"proposals",
-//     tableName: "nft_mint_data"
-// })
+}, {
+    // modelName:"proposals",
+    tableName: "nft_mint_data"
+})

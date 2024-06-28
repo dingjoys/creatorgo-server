@@ -80,3 +80,13 @@ CREATE TABLE `nft_mint_data` (
   UNIQUE `index_contract` (`contract`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+create table creator (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `address` binary(20) DEFAULT NULL,
+  `score` int,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE `creator_address` (`address`)
+);

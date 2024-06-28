@@ -89,18 +89,3 @@ const port = process.env.PORT || 3036; // Use the port specified in the environm
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-
-type Creator = {
-    address: hexString,
-    contracts: {
-        metadata: string,
-        address: hexString,
-        supply: number,
-        uniqueHolderNumber: number,
-        whaleNumber: number,
-    }[],
-    best_srcs: string[], // 随机挑选
-    score: number,
-    uniqueHolderNumber: number,
-    whaleNumber: number,
-}

@@ -7,6 +7,7 @@ import { hexString } from "../types";
 import axios from 'axios'
 import { ethers } from "ethers";
 import { nftAbi } from "../schedule/contractSyncer";
+import { NftMintData } from "../model/nftMintData";
 
 type Creator = {
     address: hexString,
@@ -50,19 +51,27 @@ export const getCreatorData = async (address) => {
         }, raw: true
     })
     if (contracts.length) {
-        // const whaleAddresses = await getWhales()
-        const uniqueHoldersNumber = await NftTransfer.findAndCountAll(
+
+        const mintData: any[] = await NftMintData.findAll({
+            where: {
+                contract: { [Op.in]: contracts.map(c => c.contract) }
+            }, raw: true
+        })
+
+        const uniqueHolders = await NftTransfer.findAndCountAll(
             {
-                attributes: [[fn("distinct", "to"), "owner"]],
+                attributes: [[literal("distinct(to)"), "owner"]],
                 where: {
                     contract: { [Op.in]: contracts.map(c => c.contract) }
                 },
-                raw: true
+                raw: true, limit: 10
             }
         )
         const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
         return {
-            uniqueHoldersNumber,
+            uniqueHolderNumber: uniqueHolders.count,
+            totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),,
+            totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             imgs,
             contracts: contracts.map(c => binaryToHexString(c.contract))
         }

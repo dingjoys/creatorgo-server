@@ -92,16 +92,19 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
                 where: {
                     contract: hexStringToBinary(contract)
                 },
-                limit: 5
+                limit: 5,
+                raw: true
             })
-            console.log(randomTokenIds)
             const contractObj = new ethers.Contract(contract, nftAbi, provider)
             try {
-                const uri = await contractObj.uri(binaryToNumber(randomTokenIds))
-                if (uri) {
-                    const result = await fetchAPiOrIpfsData(uri)
-                    if (result.image) {
-                        imgs.push(result.image)
+                for (let tokenIdObj of randomTokenIds) {
+                    console.log(tokenIdObj)
+                    const uri = await contractObj.uri(binaryToNumber(tokenIdObj.token_id))
+                    if (uri) {
+                        const result = await fetchAPiOrIpfsData(uri)
+                        if (result.image) {
+                            imgs.push(result.image)
+                        }
                     }
                 }
             } catch (e) {

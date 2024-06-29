@@ -120,9 +120,9 @@ export const getCreatorData = async (address) => {
 }
 
 export const getCollectionData = async (contract, provider) => {
+    console.log(contract)
     const tokenIds: any = await NftTransfer.findAll({
         attributes: ["token_id", [literal("sum(amount)"), "total_amount"]],
-        order: [fn("rand")],
         where: {
             contract: hexStringToBinary(contract),
             [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]

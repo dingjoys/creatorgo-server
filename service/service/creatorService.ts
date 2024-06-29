@@ -97,7 +97,7 @@ export const getCreatorData = async (address) => {
         const provider = getProvider()
         const collections: any[] = []
         for (let contract of contracts) {
-            collections.push(await getCollectionData(contract, provider))
+            collections.push(await getCollectionData(binaryToHexString(contract), provider))
         }
         return {
             uniqueHolderNumber: uniqueMinters.count,

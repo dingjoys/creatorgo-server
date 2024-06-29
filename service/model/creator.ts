@@ -12,13 +12,15 @@ export const Creator = quietSequelize.define("", {
     },
     address: { type: STRING },
     contracts: {
-        type: DataTypes.BLOB,
+        type: DataTypes.JSON,
     },
-    owner: { type: DataTypes.BLOB, },
-    metadata: { type: STRING },
-    supply: { type: INTEGER }
 
+    handle: { type: DataTypes.STRING, },
+    uniqueHolderNumber: { type: DataTypes.INTEGER, },
+    totalAmount: { type: DataTypes.INTEGER, },
+    totalMint: { type: DataTypes.INTEGER, },
+    whaleNumber: { type: DataTypes.INTEGER, },
+    score: { type: DataTypes.INTEGER, },
 }, {
-    // modelName:"proposals",
     tableName: "nft_contract_metadata"
 })

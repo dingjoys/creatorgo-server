@@ -5,7 +5,7 @@ import { nftContractMetadata as NftContractMetadata } from "../model/nftContract
 import { NftTransfer } from "../model/nftTransfer";
 import { hexString } from "../types";
 import axios from 'axios'
-import { BigNumberish, ethers } from "ethers";
+import { BigNumberish, ethers, providers } from "ethers";
 import { nftAbi } from "../schedule/contractSyncer";
 import { NftMintData } from "../model/nftMintData";
 
@@ -94,13 +94,17 @@ export const getCreatorData = async (address) => {
             }
         )) as any)?.block_number
 
+        const provider = getProvider()
+        const collections: any[] = []
+        for (let contract of contracts) {
+            collections.push(await getCollectionData(contract, provider))
+        }
         return {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             whaleNumber,
-            imgs,
-            contracts: contracts.map(c => binaryToHexString(c.contract)),
+            collections,
             score: calcScore(address),
             recentMints: recentMints.map(m => {
                 return {
@@ -113,6 +117,30 @@ export const getCreatorData = async (address) => {
     } else {
         return null
     }
+}
+
+export const getCollectionData = async (contract, provider) => {
+    const tokenIds: any = await NftTransfer.findAll({
+        attributes: [[literal("distinct(token_id)"), "token_id"], [literal("sum(amount)"), "total_amount"]],
+        order: [fn("rand")],
+        where: {
+            contract: hexStringToBinary(contract),
+            [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
+        },
+        limit: 100000,
+        raw: true
+    })
+    const data: any[] = []
+    for (let tokenIdObj of tokenIds) {
+        const img = await getNftImg(contract, binaryToNumber(tokenIdObj.token_id), provider)
+        data.push({
+            contract,
+            tokenId: tokenIdObj.token_id,
+            total_amount: tokenIdObj.total_amount,
+            img
+        })
+    }
+    return data
 }
 
 const creatorImageCache = {}

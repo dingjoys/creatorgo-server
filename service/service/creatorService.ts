@@ -60,11 +60,11 @@ export const getCreatorData = async (address) => {
                 raw: true
             }
         )
-        const imgs = await getCreatorImgs(address)
+        const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
         return {
             uniqueHoldersNumber,
             imgs,
-            contracts: contracts.map(c => c.contract)
+            contracts: contracts.map(c => binaryToHexString(c.contract))
         }
         // const whaleNumber = uniqueHoldersNumber.rows.filter((r: any) => {
         //     r.owner
@@ -75,32 +75,32 @@ export const getCreatorData = async (address) => {
 }
 
 const creatorImageCache = {}
-export const getCreatorImgs = async (address) => {
+export const getCreatorImgs = async (address, contracts: hexString[]) => {
 
     if (creatorImageCache[address]) {
         return creatorImageCache[address]
     }
 
-    const contracts: any[] = await NftContractMetadata.findAll({
-        where: {
-            owner: hexStringToBinary(address)
-        }, raw: true
-    })
+    // const contracts: any[] = await NftContractMetadata.findAll({
+    //     where: {
+    //         owner: hexStringToBinary(address)
+    //     }, raw: true
+    // })
+    console.log(contracts)
     if (contracts.length) {
         const provider = getProvider()
         const imgs: string[] = []
         for (let contract of contracts) {
-            const contractAddress = binaryToHexString(contract.contract)
             const randomTokenIds: any = await NftTransfer.findAll({
                 attributes: [[fn("distinct", "token_id"), "token_id"]],
                 order: [fn("rand")],
                 where: {
-                    contract: contract.contract
+                    contract
                 },
                 limit: 5
             })
 
-            const contractObj = new ethers.Contract(contractAddress, nftAbi, provider)
+            const contractObj = new ethers.Contract(contract, nftAbi, provider)
             try {
                 const uri = await contractObj.uri(binaryToNumber(randomTokenIds))
                 if (uri) {

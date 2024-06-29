@@ -97,7 +97,10 @@ export const getCreatorData = async (address) => {
         const provider = getProvider()
         const collections: any[] = []
         for (let c of contracts) {
-            collections.push(await getCollectionData(binaryToHexString(c.contract), provider))
+            collections.push({
+                metadata: getContractMetadata(binaryToHexString(c.contract), provider),
+                tokens: await getCollectionData(binaryToHexString(c.contract), provider)
+            })
         }
         return {
             uniqueHolderNumber: uniqueMinters.count,
@@ -133,7 +136,7 @@ export const getCollectionData = async (contract, provider) => {
     })
     const data: any[] = []
     for (let tokenIdObj of tokenIds) {
-        const img = await getNftImg(contract, binaryToNumber(tokenIdObj.token_id), provider)
+        const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
             contract,
             tokenId: binaryToNumber(tokenIdObj.token_id).toString(),
@@ -165,7 +168,7 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
                 raw: true
             })
             for (let tokenIdObj of randomTokenIds) {
-                imgs.push(await getNftImg(contract, binaryToNumber(tokenIdObj.token_id), provider))
+                imgs.push(await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider))
             }
         }
         creatorImageCache[address] = imgs
@@ -175,12 +178,27 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
     }
 }
 
-export const getNftImg = async (contract, tokenId: BigNumberish, provider) => {
+export const getContractMetadata = async (contract, provider) => {
+    const contractObj = new ethers.Contract(contract, nftAbi, provider)
+    try {
+        const contractURI = await contractObj.contractURI()
+        if (contractURI) {
+            const metadataRaw = await fetchAPiOrIpfsData(contractURI)
+            return metadataRaw
+        }
+    }
+    catch (e) {
+        console.log(`error 4 - ${contract}`)
+    }
+}
+
+export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) => {
     const contractObj = new ethers.Contract(contract, nftAbi, provider)
     try {
         const uri = await contractObj.uri(tokenId)
         if (uri) {
             const result = await fetchAPiOrIpfsData(uri)
+            return result;
             if (result.image) {
                 return (result.image)
             }
@@ -190,6 +208,7 @@ export const getNftImg = async (contract, tokenId: BigNumberish, provider) => {
             const uri = await contractObj.tokenURI(tokenId)
             if (uri) {
                 const result = await fetchAPiOrIpfsData(uri)
+                return result;
                 if (result.image) {
                     return result.image
                 }

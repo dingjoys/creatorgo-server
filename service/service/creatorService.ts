@@ -86,7 +86,6 @@ export const getCreatorData = async (address) => {
 
         const firstMintBlockNumber = ((await NftTransfer.findOne(
             {
-                attributes: [[literal("distinct(`to`)"), "owner"]],
                 where: {
                     contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
@@ -94,6 +93,7 @@ export const getCreatorData = async (address) => {
                 raw: true, order: [["id", "asc"]]
             }
         )) as any)?.block_number
+
         return {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),

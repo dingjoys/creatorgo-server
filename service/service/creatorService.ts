@@ -77,16 +77,11 @@ export const getCreatorData = async (address) => {
 const creatorImageCache = {}
 export const getCreatorImgs = async (address, contracts: hexString[]) => {
 
+    console.log(contracts, creatorImageCache[address])
     if (creatorImageCache[address]) {
         return creatorImageCache[address]
     }
 
-    // const contracts: any[] = await NftContractMetadata.findAll({
-    //     where: {
-    //         owner: hexStringToBinary(address)
-    //     }, raw: true
-    // })
-    console.log(contracts)
     if (contracts.length) {
         const provider = getProvider()
         const imgs: string[] = []
@@ -99,7 +94,7 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
                 },
                 limit: 5
             })
-
+            console.log(randomTokenIds)
             const contractObj = new ethers.Contract(contract, nftAbi, provider)
             try {
                 const uri = await contractObj.uri(binaryToNumber(randomTokenIds))

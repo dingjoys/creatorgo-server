@@ -93,7 +93,7 @@ export const getCreatorImgs = async (address) => {
             const contractAddress = binaryToHexString(contract.contract)
             const randomTokenIds: any = await NftTransfer.findAll({
                 attributes: [[fn("distinct", "token_id"), "token_id"]],
-                order: [fn("random")],
+                order: [fn("rand")],
                 where: {
                     contract: contract.contract
                 },

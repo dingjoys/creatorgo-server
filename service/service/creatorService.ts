@@ -5,7 +5,7 @@ import { nftContractMetadata as NftContractMetadata } from "../model/nftContract
 import { NftTransfer } from "../model/nftTransfer";
 import { hexString } from "../types";
 import axios from 'axios'
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { nftAbi } from "../schedule/contractSyncer";
 import { NftMintData } from "../model/nftMintData";
 
@@ -58,26 +58,41 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
-        const uniqueHolders = await NftTransfer.findAndCountAll(
+        const uniqueMinter = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
                 where: {
-                    contract: { [Op.in]: contracts.map(c => c.contract) }
+                    contract: { [Op.in]: contracts.map(c => c.contract) },
+                    [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
-                raw: true, limit: 10
+                raw: true, limit: 1000000
+            }
+        )
+
+        const recentMints = await NftTransfer.findAndCountAll(
+            {
+                where: {
+                    contract: { [Op.in]: contracts.map(c => c.contract) },
+                    [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
+                },
+                raw: true, limit: 10,
+                order: [["id", "desc"]]
             }
         )
         const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
+
+        const whaleNumber = uniqueMinter.rows.filter((r: any) => {
+            r.owner
+        }).length
+
         return {
-            uniqueHolderNumber: uniqueHolders.count,
+            uniqueHolderNumber: uniqueMinter.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
+            whaleNumber,
             imgs,
-            contracts: contracts.map(c => binaryToHexString(c.contract))
+            contracts: contracts.map(c => binaryToHexString(c.contract)),
         }
-        // const whaleNumber = uniqueHoldersNumber.rows.filter((r: any) => {
-        //     r.owner
-        // })
     } else {
         return null
     }
@@ -86,7 +101,6 @@ export const getCreatorData = async (address) => {
 const creatorImageCache = {}
 export const getCreatorImgs = async (address, contracts: hexString[]) => {
 
-    console.log(contracts, creatorImageCache[address])
     if (creatorImageCache[address]) {
         return creatorImageCache[address]
     }
@@ -104,37 +118,40 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
                 limit: 5,
                 raw: true
             })
-            const contractObj = new ethers.Contract(contract, nftAbi, provider)
-            try {
-                for (let tokenIdObj of randomTokenIds) {
-                    console.log(tokenIdObj)
-                    const uri = await contractObj.uri(binaryToNumber(tokenIdObj.token_id))
-                    if (uri) {
-                        const result = await fetchAPiOrIpfsData(uri)
-                        if (result.image) {
-                            imgs.push(result.image)
-                        }
-                    }
-                }
-            } catch (e) {
-                try {
-                    const uri = await contractObj.tokenURI(binaryToNumber(randomTokenIds))
-                    if (uri) {
-                        const result = await fetchAPiOrIpfsData(uri)
-                        if (result.image) {
-                            imgs.push(result.image)
-                        }
-                    }
-
-                } catch (e2) {
-
-                }
+            for (let tokenIdObj of randomTokenIds) {
+                imgs.push(await getNftImg(contract, binaryToNumber(tokenIdObj.token_id), provider))
             }
         }
         creatorImageCache[address] = imgs
         return imgs
     } else {
         return null
+    }
+}
+
+export const getNftImg = async (contract, tokenId: BigNumberish, provider) => {
+    const contractObj = new ethers.Contract(contract, nftAbi, provider)
+    try {
+        const uri = await contractObj.uri(tokenId)
+        if (uri) {
+            const result = await fetchAPiOrIpfsData(uri)
+            if (result.image) {
+                return (result.image)
+            }
+        }
+    } catch (e) {
+        try {
+            const uri = await contractObj.tokenURI(tokenId)
+            if (uri) {
+                const result = await fetchAPiOrIpfsData(uri)
+                if (result.image) {
+                    return result.image
+                }
+            }
+
+        } catch (e2) {
+            return null
+        }
     }
 }
 

@@ -60,7 +60,7 @@ export const getCreatorData = async (address) => {
 
         const uniqueHolders = await NftTransfer.findAndCountAll(
             {
-                attributes: [[literal("distinct(to)"), "owner"]],
+                attributes: [[literal("distinct(`to`)"), "owner"]],
                 where: {
                     contract: { [Op.in]: contracts.map(c => c.contract) }
                 },

@@ -1,4 +1,4 @@
-import { fn, Op } from "sequelize";
+import { fn, literal, Op } from "sequelize";
 import { binaryToHexString, binaryToNumber, fetchAPiOrIpfsData, getProvider, hexStringToBinary } from "../lib/utils";
 import { quietSequelize } from "../model";
 import { nftContractMetadata as NftContractMetadata } from "../model/nftContractMetadata";
@@ -87,7 +87,7 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
         const imgs: string[] = []
         for (let contract of contracts) {
             const randomTokenIds: any = await NftTransfer.findAll({
-                attributes: [[fn("distinct", "token_id"), "token_id"]],
+                attributes: [[literal("distinct(token_id)"), "token_id"]],
                 order: [fn("rand")],
                 where: {
                     contract: hexStringToBinary(contract)

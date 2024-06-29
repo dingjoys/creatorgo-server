@@ -90,7 +90,7 @@ export const getCreatorImgs = async (address, contracts: hexString[]) => {
                 attributes: [[fn("distinct", "token_id"), "token_id"]],
                 order: [fn("rand")],
                 where: {
-                    contract
+                    contract: hexStringToBinary(contract)
                 },
                 limit: 5
             })

@@ -70,7 +70,7 @@ export const getCreatorData = async (address) => {
         const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
         return {
             uniqueHolderNumber: uniqueHolders.count,
-            totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),,
+            totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             imgs,
             contracts: contracts.map(c => binaryToHexString(c.contract))

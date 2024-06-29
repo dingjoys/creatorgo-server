@@ -133,10 +133,10 @@ export const getCollectionData = async (contract, provider) => {
     })
     const data: any[] = []
     for (let tokenIdObj of tokenIds) {
-        const img = await getNftImg(contract, binaryToNumber(tokenIdObj.token_id).toString(), provider)
+        const img = await getNftImg(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
             contract,
-            tokenId: tokenIdObj.token_id,
+            tokenId: binaryToNumber(tokenIdObj.token_id).toString(),
             total_amount: tokenIdObj.total_amount,
             img
         })

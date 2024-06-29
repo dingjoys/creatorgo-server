@@ -78,6 +78,13 @@ router.post("/webhook/zora", async (ctx) => {
     }
 })
 
+router.get("/api/creator/data", async (ctx) => {
+    const { owner } = ctx.request.query
+    console.log(owner)
+
+    ctx.body = DefaultResponse()
+})
+
 
 app.use(router.routes());
 

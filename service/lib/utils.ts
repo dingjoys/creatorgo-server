@@ -2,6 +2,7 @@
 import config from "config";
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { hexString } from "../types";
+import axios from 'axios'
 const fs = require("fs");
 
 export async function sleep(ms: number) {
@@ -143,12 +144,12 @@ export const unique = (arr: number[]) => {
   return [...new Set(arr)]
 }
 
-export const getErc20TransferTableName = (network: any, contract: hexString) => {
-  return `erc20_transfer_${parseInt(network)}_${contract.substring(2).toLowerCase()}`
-}
-export const getErc721TransferTableName = (network: any, contract: hexString) => {
-  return `erc721_transfer_${parseInt(network)}_${contract.substring(2).toLowerCase()}`
-}
-export const getTransactionTableName = (network: any, contract: hexString) => {
-  return `tx_${parseInt(network)}_${contract.substring(2).toLowerCase()}`
+
+const ipfsHead = "https://metopia.quicknode-ipfs.com/ipfs"
+export const fetchAPiOrIpfsData = (uri) => {
+  if (uri.startsWith("ipfs://")) {
+    return axios.get(`${ipfsHead}/${uri.replace("ipfs://", "")}`).then(res => res.data)
+  } else {
+    return axios.get(uri).then(res => res.data)
+  }
 }

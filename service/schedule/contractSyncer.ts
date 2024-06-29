@@ -4,14 +4,6 @@ import { quietSequelize, sequelize } from "../model"
 import axios from 'axios'
 import { nftContractMetadata } from "../model/nftContractMetadata"
 
-const ipfsHead = "https://metopia.quicknode-ipfs.com/ipfs"
-const fetchUri = (uri) => {
-    if (uri.startsWith("ipfs://")) {
-        return axios.get(`${ipfsHead}/${uri.replace("ipfs://", "")}`).then(res => res.data)
-    } else {
-        return axios.get(uri).then(res => res.data)
-    }
-}
 
 let globalCurrentIndex = 7780
 export const syncNewContractInfos = async () => {
@@ -19,7 +11,7 @@ export const syncNewContractInfos = async () => {
 
     const batchSize = 1000
     const contracts = (await sequelize.query(`
-             select distinct contract from nft_transfer limit ${globalCurrentIndex},${batchSize}
+             select distinct contract from nft_transfer_1 limit ${globalCurrentIndex},${batchSize}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
     if (contracts?.length) {
         const existed = (await quietSequelize.query(`
@@ -91,7 +83,7 @@ export const syncNewContractInfos = async () => {
     }
 }
 
-const nftAbi = [
+export const nftAbi = [
     {
         "inputs": [],
         "name": "totalSupply",

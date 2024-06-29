@@ -58,7 +58,7 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
-        const uniqueMinter = await NftTransfer.findAndCountAll(
+        const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
                 where: {
@@ -81,17 +81,19 @@ export const getCreatorData = async (address) => {
         )
         const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
 
-        const whaleNumber = uniqueMinter.rows.filter((r: any) => {
+        const whaleNumber = uniqueMinters.rows.filter((r: any) => {
             r.owner
         }).length
 
         return {
-            uniqueHolderNumber: uniqueMinter.count,
+            uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             whaleNumber,
             imgs,
             contracts: contracts.map(c => binaryToHexString(c.contract)),
+            score: calcScore(address),
+            uniqueMinters
         }
     } else {
         return null
@@ -155,6 +157,9 @@ export const getNftImg = async (contract, tokenId: BigNumberish, provider) => {
     }
 }
 
-export const calcScore = (address) => {
+export const calcScore = (address,) => {
+
+    const score = Math.random() * 100
+    return score
 
 }

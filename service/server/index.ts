@@ -5,9 +5,8 @@ import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
-import { bulkCreateNftTransfers } from '../service/nftLogService';
-import { hexString } from '../types';
 import { getCreatorData } from '../service/creatorService';
+import { bulkCreateNftTransfers } from '../service/nftLogService';
 const zlib = require('zlib');
 
 dotenv.config();

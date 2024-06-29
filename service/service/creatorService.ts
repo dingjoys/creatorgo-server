@@ -51,7 +51,6 @@ export const getCreatorData = async (address) => {
         }, raw: true
     })
     if (contracts.length) {
-
         const mintData: any[] = await NftMintData.findAll({
             where: {
                 contract: { [Op.in]: contracts.map(c => c.contract) }
@@ -65,11 +64,11 @@ export const getCreatorData = async (address) => {
                     contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
-                raw: true, limit: 1000000
+                raw: true, limit: 1000000, order: [["id", "desc"]]
             }
         )
 
-        const recentMints = await NftTransfer.findAndCountAll(
+        const recentMints: any[] = await NftTransfer.findAll(
             {
                 where: {
                     contract: { [Op.in]: contracts.map(c => c.contract) },
@@ -85,6 +84,8 @@ export const getCreatorData = async (address) => {
             r.owner
         }).length
 
+        const firstMintTimestamp = (uniqueMinters?.rows?.[0] as any).updatedAt
+
         return {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
@@ -93,7 +94,13 @@ export const getCreatorData = async (address) => {
             imgs,
             contracts: contracts.map(c => binaryToHexString(c.contract)),
             score: calcScore(address),
-            uniqueMinters
+            recentMints: recentMints.map(m => {
+                return {
+                    minter: binaryToHexString(m.to),
+                    block_number: m.block_number
+                }
+            }),
+            firstMintTimestamp
         }
     } else {
         return null

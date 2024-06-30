@@ -41,18 +41,17 @@ const getWhales = async () => {
     }
 }
 export const randomCreators = async (offset) => {
-
     const owners: any[] = await NftContractMetadata.findAll({
         attributes: [[literal("distinct(owner)"), "owner"]],
         order: [fn("rand")],
         raw: true, limit: 5, offset: offset || 0
     })
-    return owners?.map(o => binaryToHexString(o.owner))
+
+    return Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
 }
 
 
 export const getCreatorData = async (address) => {
-
     const redisKey = `CreatorData-${address}`
     if (await redis.get(redisKey)) {
         return JSON.parse(await redis.get(redisKey))

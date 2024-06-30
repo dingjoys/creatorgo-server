@@ -104,6 +104,8 @@ export const getCreatorData = async (address) => {
                 mintfun
             })
         }
+        console.log(`https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%22${ethers.utils.getAddress(address)}%22%7D`)
+        const zora = (await axios.get(`https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%22${ethers.utils.getAddress(address)}%22%7D`)).data
         return {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
@@ -118,7 +120,7 @@ export const getCreatorData = async (address) => {
                 }
             }),
             firstMintBlockNumber,
-            zora: (await axios.get(`https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%22${address}%22%7D`)).data
+
         }
     } else {
         return null

@@ -126,7 +126,7 @@ export const getCreatorData = async (address) => {
                 }
             }),
             firstMintBlockNumber,
-
+            zora
         }
     } else {
         return null

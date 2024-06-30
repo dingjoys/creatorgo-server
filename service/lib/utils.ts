@@ -3,6 +3,9 @@ import config from "config";
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { hexString } from "../types";
 import axios from 'axios'
+import redis from "./redis";
+export { redis };
+
 const fs = require("fs");
 
 export async function sleep(ms: number) {

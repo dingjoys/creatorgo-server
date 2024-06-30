@@ -1,5 +1,5 @@
 import { fn, literal, Op } from "sequelize";
-import { binaryToHexString, binaryToNumber, fetchAPiOrIpfsData, getProvider, hexStringToBinary } from "../lib/utils";
+import { binaryToHexString, binaryToNumber, fetchAPiOrIpfsData, getProvider, hexStringToBinary, redis } from "../lib/utils";
 import { quietSequelize } from "../model";
 import { nftContractMetadata as NftContractMetadata } from "../model/nftContractMetadata";
 import { NftTransfer } from "../model/nftTransfer";
@@ -24,7 +24,7 @@ type Creator = {
     whaleNumber: number,
 }
 
-let whales = []
+let whales: string[] = []
 const getWhales = async () => {
     if (whales.length) {
         return whales
@@ -35,7 +35,7 @@ const getWhales = async () => {
                     'X-API-KEY': 'B8Jsv1hdmcMfz3oYEcXNxYbP'
                 }
             }))?.data
-            whales = whales.concat(result?.data?.map(d => d.account_address))
+            whales = whales.concat(result?.data?.map(d => d.account_address.toLowerCase()))
         }
         return whales
     }
@@ -44,8 +44,15 @@ export const leaderboard = () => {
 
 }
 
+
+
 export const getCreatorData = async (address) => {
-    console.log(address)
+
+    const redisKey = `CreatorData-${address}`
+    if (await redis.get(redisKey)) {
+        return JSON.parse(await redis.get(redisKey))
+    }
+
     const contracts: any[] = await NftContractMetadata.findAll({
         where: {
             owner: hexStringToBinary(address)
@@ -79,9 +86,9 @@ export const getCreatorData = async (address) => {
                 order: [["id", "desc"]]
             }
         )
-
+        const tmpWhaleAddress = await getWhales()
         const whaleNumber = uniqueMinters.rows.filter((r: any) => {
-            r.owner
+            return tmpWhaleAddress.indexOf(binaryToHexString(r.owner).toLowerCase()) > -1
         }).length
 
         const firstMintBlockNumber = ((await NftTransfer.findOne(
@@ -109,9 +116,9 @@ export const getCreatorData = async (address) => {
             zora = (await axios.get(`https://zora.co/api/profiles/${ethers.utils.getAddress(address)}?expandedData=true`)).data
         }
         catch (e) {
-        }
 
-        return {
+        }
+        const result = {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
@@ -129,6 +136,9 @@ export const getCreatorData = async (address) => {
             firstMintBlockNumber,
             zora
         }
+
+        await redis.set(redisKey, JSON.stringify(result))
+        return result
     } else {
         return null
     }
@@ -233,8 +243,14 @@ export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) 
 }
 
 export const calcScore = (address,) => {
-
     const score = Math.random() * 100
-    return score
+    // 1. sold total nfts
+    // 2. earnings
+    // 3. mint days - engagement
+    // 4. whales
+    // 5. 
+    // const data = 
 
+
+    return score
 }

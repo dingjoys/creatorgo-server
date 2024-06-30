@@ -265,11 +265,11 @@ export const calcScore = async (data) => {
     //     minted
     // }
     // const rawData = await getCreatorData(address)
-    score += (Math.min(data.minted / 100) * 20, 10)
-    score += (Math.min(data.uniqueHolderNumber / 1000) * 20, 10)
-    score += (Math.min(data.whaleNumber / 10) * 20, 10)
-    score += (Math.min(data.creationCounts / 20) * 20, 10)
-    score += (Math.min(data.activeMintBlockNumber / 1000) * 20, 10)
+    score += (Math.min(data.minted / 100 * 20, 10))
+    score += (Math.min(data.uniqueHolderNumber / 1000 * 20, 10))
+    score += (Math.min(data.whaleNumber / 10 * 20, 10))
+    score += (Math.min(data.creationCounts / 20 * 20, 10))
+    score += (Math.min(data.activeMintBlockNumber / 1000 * 20, 10))
 
     return score
 }

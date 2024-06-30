@@ -52,7 +52,7 @@ export const randomCreators = async (offset) => {
 
 
 export const getCreatorData = async (address) => {
-    const redisKey = `CreatorData-${address}`
+    const redisKey = `CreatorData-1-${address}`
     if (await redis.get(redisKey)) {
         return JSON.parse(await redis.get(redisKey))
     }
@@ -148,7 +148,7 @@ export const getCreatorData = async (address) => {
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             whaleNumber,
             collections,
-            score: calcScore(address),
+            score: await calcScore(address),
             recentMints: recentMints.map(m => {
                 return {
                     contract: binaryToHexString(m.contract),

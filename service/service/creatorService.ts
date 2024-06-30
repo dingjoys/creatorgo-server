@@ -65,6 +65,13 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
+        const minted = await NftMintData.count({
+            where: {
+                to: binaryToHexString(address),
+                [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
+            },
+        })
+
         const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
@@ -134,7 +141,8 @@ export const getCreatorData = async (address) => {
                 }
             }),
             firstMintBlockNumber,
-            zora
+            zora,
+            minted
         }
 
         await redis.set(redisKey, JSON.stringify(result))
@@ -242,7 +250,7 @@ export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) 
     }
 }
 
-export const calcScore = (address,) => {
+export const calcScore = async (address,) => {
     const score = Math.random() * 100
     // 1. sold total nfts
     // 2. earnings
@@ -250,7 +258,27 @@ export const calcScore = (address,) => {
     // 4. whales
     // 5. 
     // const data = 
-
+    // {
+    //     uniqueHolderNumber: uniqueMinters.count,
+    //     totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
+    //     totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
+    //     whaleNumber,
+    //     collections,
+    //     score: calcScore(address),
+    //     recentMints: recentMints.map(m => {
+    //         return {
+    //             contract: binaryToHexString(m.contract),
+    //             token_id: binaryToHexString(m.token_id),
+    //             minter: binaryToHexString(m.to),
+    //             block_number: m.block_number
+    //         }
+    //     }),
+    //     firstMintBlockNumber,
+    //     zora,
+    //     minted
+    // }
+    const rawData = await getCreatorData(address)
+    
 
     return score
 }

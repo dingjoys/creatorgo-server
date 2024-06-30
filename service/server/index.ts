@@ -7,6 +7,7 @@ import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
 import { getCreatorData } from '../service/creatorService';
 import { bulkCreateNftTransfers } from '../service/nftLogService';
+import cors from "kcors";
 const zlib = require('zlib');
 
 dotenv.config();
@@ -16,6 +17,7 @@ onerror(app)
 // app.use(compress());
 // app.use(bodyparser())
 app.use(logger())
+app.use(cors());
 
 const router = new Router();
 

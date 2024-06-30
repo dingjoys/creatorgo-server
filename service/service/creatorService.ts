@@ -117,7 +117,8 @@ export const getCreatorData = async (address) => {
                     block_number: m.block_number
                 }
             }),
-            firstMintBlockNumber
+            firstMintBlockNumber,
+            zora: (await axios.get(`https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%22${address}%22%7D`)).data
         }
     } else {
         return null

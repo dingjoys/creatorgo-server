@@ -78,10 +78,8 @@ router.post("/webhook/zora", async (ctx) => {
 })
 
 router.get("/api/creator/data", async (ctx) => {
-    console.log("!!")
     const { owner } = ctx.request.query
     const data = await getCreatorData(owner)
-    console.log(data)
     return ctx.body = DefaultResponse(data)
 })
 

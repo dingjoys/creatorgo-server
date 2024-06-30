@@ -22,7 +22,6 @@ const router = new Router();
 router.post("/webhook/nft", async (ctx) => {
     const { headers, body } = ctx.request;
 
-    console.log(body)
     ctx.body = DefaultResponse()
 })
 
@@ -78,16 +77,15 @@ router.post("/webhook/zora", async (ctx) => {
     }
 })
 
-router.get("/test", async (ctx) => {
-    ctx.body = DefaultResponse()
-})
 router.get("/api/creator/data", async (ctx) => {
     console.log("!!")
     const { owner } = ctx.request.query
     const data = await getCreatorData(owner)
     console.log(data)
-    ctx.body = DefaultResponse(data)
+    return ctx.body = DefaultResponse(data)
 })
+
+app.use(router.routes());
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx)

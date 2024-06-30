@@ -120,6 +120,7 @@ export const getCreatorData = async (address) => {
             score: calcScore(address),
             recentMints: recentMints.map(m => {
                 return {
+                    contract: binaryToHexString(m.contract),
                     token_id: binaryToHexString(m.token_id),
                     minter: binaryToHexString(m.to),
                     block_number: m.block_number

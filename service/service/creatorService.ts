@@ -1,6 +1,6 @@
 import { fn, literal, Op } from "sequelize";
 import { binaryToHexString, binaryToNumber, fetchAPiOrIpfsData, getProvider, hexStringToBinary, redis } from "../lib/utils";
-import { quietSequelize } from "../model";
+import { quietSequelize, sequelize } from "../model";
 import { nftContractMetadata as NftContractMetadata } from "../model/nftContractMetadata";
 import { NftTransfer } from "../model/nftTransfer";
 import { hexString } from "../types";
@@ -65,7 +65,7 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
-        const minted = await NftMintData.count({
+        const minted = await NftTransfer.count({
             where: {
                 to: binaryToHexString(address),
                 [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
@@ -118,6 +118,19 @@ export const getCreatorData = async (address) => {
                 mintfun
             })
         }
+
+        const creationCounts = (await quietSequelize.query(`
+            select count(*) as \`count\` from (select distinct(token_id) from nft_transfer_1 where 
+            contract in ( ${contracts.map(c => `'${binaryToHexString(c.contract)}'`).join(",")} )
+            ) as tmp
+        `) as any)?.[0]?.[0]?.count
+
+        const activeMintBlockNumber = (await quietSequelize.query(`
+            select count(*) from (select distinct(block_number) from nft_transfer_1 where 
+            contract in ( ${contracts.map(c => `'${binaryToHexString(c.contract)}'`).join(",")} )
+            ) as tmp
+        `) as any)?.[0]?.[0]?.count
+
         let zora = {}
         try {
             zora = (await axios.get(`https://zora.co/api/profiles/${ethers.getAddress(address)}?expandedData=true`)).data
@@ -142,7 +155,9 @@ export const getCreatorData = async (address) => {
             }),
             firstMintBlockNumber,
             zora,
-            minted
+            minted,
+            creationCounts,
+            activeMintBlockNumber
         }
 
         await redis.set(redisKey, JSON.stringify(result))
@@ -165,7 +180,8 @@ export const getCollectionData = async (contract, provider) => {
         raw: true
     })
     const data: any[] = []
-    for (let tokenIdObj of tokenIds) {
+    for (let i = 0; i < 5 && i < tokenIds.length; i++) {
+        let tokenIdObj = tokenIds[i]
         const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
             contract,
@@ -175,37 +191,6 @@ export const getCollectionData = async (contract, provider) => {
         })
     }
     return data
-}
-
-const creatorImageCache = {}
-export const getCreatorImgs = async (address, contracts: hexString[]) => {
-
-    if (creatorImageCache[address]) {
-        return creatorImageCache[address]
-    }
-
-    if (contracts.length) {
-        const provider = getProvider()
-        const imgs: string[] = []
-        for (let contract of contracts) {
-            const randomTokenIds: any = await NftTransfer.findAll({
-                attributes: [[literal("distinct(token_id)"), "token_id"]],
-                order: [fn("rand")],
-                where: {
-                    contract: hexStringToBinary(contract)
-                },
-                limit: 5,
-                raw: true
-            })
-            for (let tokenIdObj of randomTokenIds) {
-                imgs.push(await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider))
-            }
-        }
-        creatorImageCache[address] = imgs
-        return imgs
-    } else {
-        return null
-    }
 }
 
 export const getContractMetadata = async (contract, provider) => {
@@ -251,7 +236,7 @@ export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) 
 }
 
 export const calcScore = async (address,) => {
-    const score = Math.random() * 100
+    let score = 0
     // 1. sold total nfts
     // 2. earnings
     // 3. mint days - engagement
@@ -278,7 +263,11 @@ export const calcScore = async (address,) => {
     //     minted
     // }
     const rawData = await getCreatorData(address)
-    
+    score += (Math.min(rawData.minted / 100) * 20, 10)
+    score += (Math.min(rawData.uniqueHolderNumber / 1000) * 20, 10)
+    score += (Math.min(rawData.whaleNumber / 10) * 20, 10)
+    score += (Math.min(rawData.creationCounts / 20) * 20, 10)
+    score += (Math.min(rawData.activeMintBlockNumber / 1000) * 20, 10)
 
     return score
 }

@@ -50,7 +50,6 @@ export const randomCreators = async (offset) => {
     return Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
 }
 
-
 export const getCreatorData = async (address) => {
     const redisKey = `CreatorData-1-${address}`
     if (await redis.get(redisKey)) {
@@ -148,7 +147,7 @@ export const getCreatorData = async (address) => {
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),
             whaleNumber,
             collections,
-            score: await calcScore(address),
+            score: 0,
             recentMints: recentMints.map(m => {
                 return {
                     contract: binaryToHexString(m.contract),
@@ -163,7 +162,7 @@ export const getCreatorData = async (address) => {
             creationCounts,
             activeMintBlockNumber
         }
-
+        result.score = await calcScore(result)
         await redis.set(redisKey, JSON.stringify(result))
         return result
     } else {
@@ -184,7 +183,7 @@ export const getCollectionData = async (contract, provider) => {
         raw: true
     })
     const data: any[] = []
-    for (let i = 0; i < 5 && i < tokenIds.length; i++) {
+    for (let i = 0; i < 3 && i < tokenIds.length; i++) {
         let tokenIdObj = tokenIds[i]
         const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
@@ -239,7 +238,7 @@ export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) 
     }
 }
 
-export const calcScore = async (address,) => {
+export const calcScore = async (data) => {
     let score = 0
     // 1. sold total nfts
     // 2. earnings
@@ -266,12 +265,12 @@ export const calcScore = async (address,) => {
     //     zora,
     //     minted
     // }
-    const rawData = await getCreatorData(address)
-    score += (Math.min(rawData.minted / 100) * 20, 10)
-    score += (Math.min(rawData.uniqueHolderNumber / 1000) * 20, 10)
-    score += (Math.min(rawData.whaleNumber / 10) * 20, 10)
-    score += (Math.min(rawData.creationCounts / 20) * 20, 10)
-    score += (Math.min(rawData.activeMintBlockNumber / 1000) * 20, 10)
+    // const rawData = await getCreatorData(address)
+    score += (Math.min(data.minted / 100) * 20, 10)
+    score += (Math.min(data.uniqueHolderNumber / 1000) * 20, 10)
+    score += (Math.min(data.whaleNumber / 10) * 20, 10)
+    score += (Math.min(data.creationCounts / 20) * 20, 10)
+    score += (Math.min(data.activeMintBlockNumber / 1000) * 20, 10)
 
     return score
 }

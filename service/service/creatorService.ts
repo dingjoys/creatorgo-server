@@ -78,7 +78,6 @@ export const getCreatorData = async (address) => {
                 order: [["id", "desc"]]
             }
         )
-        const imgs = await getCreatorImgs(address, contracts.map(c => binaryToHexString(c.contract)))
 
         const whaleNumber = uniqueMinters.rows.filter((r: any) => {
             r.owner

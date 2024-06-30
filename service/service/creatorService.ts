@@ -106,11 +106,9 @@ export const getCreatorData = async (address) => {
         }
         let zora = {}
         try {
-
             zora = (await axios.get(`https://zora.co/api/profiles/${ethers.utils.getAddress(address)}?expandedData=true`)).data
         }
         catch (e) {
-
         }
 
         return {
@@ -122,6 +120,7 @@ export const getCreatorData = async (address) => {
             score: calcScore(address),
             recentMints: recentMints.map(m => {
                 return {
+                    token_id: binaryToHexString(m.token_id),
                     minter: binaryToHexString(m.to),
                     block_number: m.block_number
                 }

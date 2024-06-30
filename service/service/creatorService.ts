@@ -116,7 +116,7 @@ export const getCreatorData = async (address) => {
         for (let c of contracts) {
             const mintfun = (await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${binaryToHexString(c.contract)}/details`)).data
             collections.push({
-                metadata: await getContractMetadata(binaryToHexString(c.contract), provider),
+                // metadata: await getContractMetadata(binaryToHexString(c.contract), provider),
                 tokens: await getCollectionData(binaryToHexString(c.contract), provider),
                 mintfun
             })
@@ -171,7 +171,6 @@ export const getCreatorData = async (address) => {
 }
 
 export const getCollectionData = async (contract, provider) => {
-    console.log(contract)
     const tokenIds: any = await NftTransfer.findAll({
         attributes: ["token_id", [literal("sum(amount)"), "total_amount"]],
         where: {
@@ -183,14 +182,15 @@ export const getCollectionData = async (contract, provider) => {
         raw: true
     })
     const data: any[] = []
-    for (let i = 0; i < 3 && i < tokenIds.length; i++) {
+    // for (let i = 0; i < 3 && i < tokenIds.length; i++) {
+    for (let i = 0; i < tokenIds.length; i++) {
         let tokenIdObj = tokenIds[i]
-        const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
+        // const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
             contract,
             tokenId: binaryToNumber(tokenIdObj.token_id).toString(),
             total_amount: tokenIdObj.total_amount,
-            img
+            // img
         })
     }
     return data

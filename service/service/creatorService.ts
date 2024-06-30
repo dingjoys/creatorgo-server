@@ -106,7 +106,8 @@ export const getCreatorData = async (address) => {
         }
         let zora = {}
         try {
-            zora = (await axios.get(`https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%22${ethers.utils.getAddress(address)}%22%7D`)).data
+
+            zora = (await axios.get(`https://zora.co/api/profiles/${ethers.utils.getAddress(address)}?expandedData=true`)).data
         }
         catch (e) {
 

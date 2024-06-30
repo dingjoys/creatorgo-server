@@ -8,6 +8,7 @@ import { DefaultResponse } from '../lib/utils';
 import { getCreatorData, randomCreators } from '../service/creatorService';
 import { bulkCreateNftTransfers } from '../service/nftLogService';
 import cors from "kcors";
+import { issue } from '../lib/eas';
 const zlib = require('zlib');
 
 dotenv.config();
@@ -88,6 +89,12 @@ router.get("/api/creator/data", async (ctx) => {
 router.get("/api/creators/random", async (ctx) => {
     const { offset } = ctx.request.query
     const data = await randomCreators(parseInt(offset || "0"))
+    return ctx.body = DefaultResponse(data)
+})
+
+router.get("/api/issue", async (ctx) => {
+    const { owner } = ctx.request.query
+    const data = await issue(owner, (await getCreatorData(owner))?.score)
     return ctx.body = DefaultResponse(data)
 })
 

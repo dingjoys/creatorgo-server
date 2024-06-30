@@ -52,4 +52,5 @@ export const issue = async (to: hexString, score) => {
     const newAttestationUID = await tx.wait();
 
     console.log("New attestation UID:", newAttestationUID);
+    return newAttestationUID
 }

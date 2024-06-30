@@ -51,7 +51,7 @@ export const randomCreators = async (offset) => {
 }
 
 export const getCreatorData = async (address) => {
-    const redisKey = `CreatorData-1-${address}`
+    const redisKey = `CreatorData-2-${address}`
     if (await redis.get(redisKey)) {
         return JSON.parse(await redis.get(redisKey))
     }

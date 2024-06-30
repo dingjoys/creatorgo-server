@@ -118,7 +118,8 @@ export const getCreatorData = async (address) => {
             collections.push({
                 // metadata: await getContractMetadata(binaryToHexString(c.contract), provider),
                 tokens: await getCollectionData(binaryToHexString(c.contract), provider),
-                mintfun
+                mintfun,
+                contract: binaryToHexString(c.contract)
             })
         }
 
@@ -187,10 +188,8 @@ export const getCollectionData = async (contract, provider) => {
         let tokenIdObj = tokenIds[i]
         // const img = await getNftMetadata(contract, binaryToNumber(tokenIdObj.token_id), provider)
         data.push({
-            contract,
             tokenId: binaryToNumber(tokenIdObj.token_id).toString(),
             total_amount: tokenIdObj.total_amount,
-            // img
         })
     }
     return data

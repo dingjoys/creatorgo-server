@@ -43,7 +43,7 @@ const getWhales = async () => {
 export const randomCreators = async (offset) => {
 
     const owners: any[] = await NftContractMetadata.findAll({
-        attributes: [[literal("literal(owner)"), "owner"]],
+        attributes: [[literal("distinct(owner)"), "owner"]],
         order: [fn("rand")],
         raw: true, limit: 5, offset: offset || 0
     })

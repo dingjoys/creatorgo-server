@@ -92,10 +92,10 @@ router.get("/api/creators/random", async (ctx) => {
     return ctx.body = DefaultResponse(data)
 })
 
-router.get("/api/issue", async (ctx) => {
-    const { owner } = ctx.request.query
+router.post("/api/issue", async (ctx) => {
+    const { owner } = ctx.request.body
     const data = await issue(owner, (await getCreatorData(owner))?.score)
-    
+
     return ctx.body = DefaultResponse(data)
 })
 

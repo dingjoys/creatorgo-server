@@ -51,7 +51,7 @@ export const randomCreators = async (offset) => {
 }
 
 export const getCreatorData = async (address) => {
-    const redisKey = `CreatorData-2-${address}`
+    const redisKey = `CreatorData-3-${address}`
     if (await redis.get(redisKey)) {
         return JSON.parse(await redis.get(redisKey))
     }
@@ -67,6 +67,13 @@ export const getCreatorData = async (address) => {
             [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
         },
     })
+    let zora = {}
+    try {
+        zora = (await axios.get(`https://zora.co/api/profiles/${ethers.getAddress(address)}?expandedData=true`)).data
+    }
+    catch (e) {
+
+    }
 
     if (contracts.length) {
         const mintData: any[] = await NftMintData.findAll({
@@ -135,13 +142,7 @@ export const getCreatorData = async (address) => {
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 
-        let zora = {}
-        try {
-            zora = (await axios.get(`https://zora.co/api/profiles/${ethers.getAddress(address)}?expandedData=true`)).data
-        }
-        catch (e) {
 
-        }
         const result = {
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
@@ -169,6 +170,7 @@ export const getCreatorData = async (address) => {
     } else {
         return {
             minted,
+            zora,
             score: calcScore({ minted })
         }
     }

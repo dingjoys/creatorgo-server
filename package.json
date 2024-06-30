@@ -27,6 +27,7 @@
   ],
   "dependencies": {
     "@endaoment/sdk": "^0.0.11",
+    "@ethereum-attestation-service/eas-sdk": "^2.3.0",
     "@ethersproject/wallet": "^5.7.0",
     "@moralisweb3/common-evm-utils": "^2.26.5",
     "@pinata/sdk": "^2.1.0",
@@ -47,7 +48,7 @@
     "ethereum-block-by-date": "^1.4.6",
     "ethereum-input-data-decoder": "^0.4.2",
     "ethereumjs-tx": "^2.1.2",
-    "ethers": "^5.6.9",
+    "ethers": "^6.13.1",
     "form-data": "^4.0.0",
     "graphql": "^16.4.0",
     "graphql-request": "^4.2.0",

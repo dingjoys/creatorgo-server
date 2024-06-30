@@ -5,7 +5,7 @@ import { nftContractMetadata as NftContractMetadata } from "../model/nftContract
 import { NftTransfer } from "../model/nftTransfer";
 import { hexString } from "../types";
 import axios from 'axios'
-import { BigNumberish, ethers, providers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { nftAbi } from "../schedule/contractSyncer";
 import { NftMintData } from "../model/nftMintData";
 
@@ -106,14 +106,14 @@ export const getCreatorData = async (address) => {
         for (let c of contracts) {
             const mintfun = (await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${binaryToHexString(c.contract)}/details`)).data
             collections.push({
-                metadata: getContractMetadata(binaryToHexString(c.contract), provider),
+                metadata: await getContractMetadata(binaryToHexString(c.contract), provider),
                 tokens: await getCollectionData(binaryToHexString(c.contract), provider),
                 mintfun
             })
         }
         let zora = {}
         try {
-            zora = (await axios.get(`https://zora.co/api/profiles/${ethers.utils.getAddress(address)}?expandedData=true`)).data
+            zora = (await axios.get(`https://zora.co/api/profiles/${ethers.getAddress(address)}?expandedData=true`)).data
         }
         catch (e) {
 

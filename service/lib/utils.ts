@@ -1,8 +1,7 @@
 
+import axios from 'axios';
 import config from "config";
-import { BigNumber, BigNumberish, ethers } from 'ethers';
-import { hexString } from "../types";
-import axios from 'axios'
+import { BigNumberish, ethers } from 'ethers';
 import redis from "./redis";
 export { redis };
 
@@ -27,7 +26,7 @@ export function loadJSONData(filePath) {
 }
 
 export const getProvider = (chain?: any) => {
-  return new ethers.providers.JsonRpcProvider(
+  return new ethers.JsonRpcProvider(
     "https://rpc-zora-mainnet-0.t.conduit.xyz/A1RqteMBmSBumexysZZz3Lb6gBU4uG1Dc"
   );
 };
@@ -126,19 +125,19 @@ export const binaryToHexString = (binary: any) => {
 }
 
 export const numberishToBinary = (number: BigNumberish) => {
-  if (BigNumber.from(number.toString()).isZero())
+  if (BigInt(number.toString()) == BigInt(0))
     return Buffer.from("")
   const buffer = Buffer.from(
-    `${BigNumber.from(number.toString()).toHexString().slice(2)}`,
+    `${BigInt(number.toString()).toString(16).slice(2)}`,
     'hex');
   return buffer;
 }
 
 export const binaryToNumber = (binary) => {
   if (!binary || !binary?.length) {
-    return BigNumber.from(0);
+    return BigInt(0);
   }
-  return BigNumber.from(`0x${binary.toString('hex')}`);
+  return BigInt(`0x${binary.toString('hex')}`);
 }
 
 export const unique = (arr: number[]) => {

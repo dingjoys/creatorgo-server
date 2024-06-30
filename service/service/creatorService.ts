@@ -40,10 +40,15 @@ const getWhales = async () => {
         return whales
     }
 }
-export const leaderboard = () => {
+export const randomCreators = async (offset) => {
 
+    const owners: any[] = await NftContractMetadata.findAll({
+        attributes: [[literal("literal(owner)"), "owner"]],
+        order: [fn("rand")],
+        raw: true, limit: 5, offset: offset || 0
+    })
+    return owners?.map(o => binaryToHexString(o.owner))
 }
-
 
 
 export const getCreatorData = async (address) => {
@@ -121,13 +126,13 @@ export const getCreatorData = async (address) => {
 
         const creationCounts = (await quietSequelize.query(`
             select count(*) as \`count\` from (select distinct(token_id) from nft_transfer_1 where 
-            contract in ( ${contracts.map(c => `'${binaryToHexString(c.contract)}'`).join(",")} )
+            contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 
         const activeMintBlockNumber = (await quietSequelize.query(`
             select count(*) from (select distinct(block_number) from nft_transfer_1 where 
-            contract in ( ${contracts.map(c => `'${binaryToHexString(c.contract)}'`).join(",")} )
+            contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 

@@ -5,7 +5,7 @@ import logger from 'koa-logger';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
-import { getCreatorData } from '../service/creatorService';
+import { getCreatorData, randomCreators } from '../service/creatorService';
 import { bulkCreateNftTransfers } from '../service/nftLogService';
 import cors from "kcors";
 const zlib = require('zlib');
@@ -82,6 +82,12 @@ router.post("/webhook/zora", async (ctx) => {
 router.get("/api/creator/data", async (ctx) => {
     const { owner } = ctx.request.query
     const data = await getCreatorData(owner)
+    return ctx.body = DefaultResponse(data)
+})
+
+router.get("/api/creators/random", async (ctx) => {
+    const { offset } = ctx.request.query
+    const data = await randomCreators(parseInt(offset || "0"))
     return ctx.body = DefaultResponse(data)
 })
 

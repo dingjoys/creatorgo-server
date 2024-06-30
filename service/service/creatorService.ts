@@ -61,18 +61,18 @@ export const getCreatorData = async (address) => {
             owner: hexStringToBinary(address)
         }, raw: true
     })
+    const minted = await NftTransfer.count({
+        where: {
+            to: binaryToHexString(address),
+            [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
+        },
+    })
+
     if (contracts.length) {
         const mintData: any[] = await NftMintData.findAll({
             where: {
                 contract: { [Op.in]: contracts.map(c => c.contract) }
             }, raw: true
-        })
-
-        const minted = await NftTransfer.count({
-            where: {
-                to: binaryToHexString(address),
-                [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
-            },
         })
 
         const uniqueMinters = await NftTransfer.findAndCountAll(
@@ -167,7 +167,10 @@ export const getCreatorData = async (address) => {
         await redis.set(redisKey, JSON.stringify(result))
         return result
     } else {
-        return null
+        return {
+            minted,
+            score: calcScore({ minted })
+        }
     }
 }
 
@@ -237,7 +240,7 @@ export const getNftMetadata = async (contract, tokenId: BigNumberish, provider) 
     }
 }
 
-export const calcScore = async (data) => {
+export const calcScore = (data) => {
     let score = 0
     // 1. sold total nfts
     // 2. earnings
@@ -265,11 +268,11 @@ export const calcScore = async (data) => {
     //     minted
     // }
     // const rawData = await getCreatorData(address)
-    score += (Math.min(data.minted / 100 * 20, 10))
-    score += (Math.min(data.uniqueHolderNumber / 1000 * 20, 10))
-    score += (Math.min(data.whaleNumber / 10 * 20, 10))
-    score += (Math.min(data.creationCounts / 20 * 20, 10))
-    score += (Math.min(data.activeMintBlockNumber / 1000 * 20, 10))
+    score += (Math.min((data.minted || 0) / 100 * 20, 10))
+    score += (Math.min((data.uniqueHolderNumber || 0) / 1000 * 20, 10))
+    score += (Math.min((data.whaleNumber || 0) / 10 * 20, 10))
+    score += (Math.min((data.creationCounts || 0) / 20 * 20, 10))
+    score += (Math.min((data.activeMintBlockNumber || 0) / 1000 * 20, 10))
 
     return score
 }

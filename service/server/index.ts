@@ -7,7 +7,6 @@ import Router from 'koa-router';
 import { DefaultResponse } from '../lib/utils';
 import { getCreatorData } from '../service/creatorService';
 import { bulkCreateNftTransfers } from '../service/nftLogService';
-import axios from 'axios'
 const zlib = require('zlib');
 
 dotenv.config();
@@ -83,6 +82,7 @@ router.post("/webhook/zora", async (ctx) => {
 router.get("/api/creator/data", async (ctx) => {
     const { owner } = ctx.request.query
     const data = await getCreatorData(owner)
+    console.log(data)
     ctx.body = DefaultResponse(data)
 })
 

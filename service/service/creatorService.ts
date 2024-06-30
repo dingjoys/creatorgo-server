@@ -45,6 +45,7 @@ export const leaderboard = () => {
 }
 
 export const getCreatorData = async (address) => {
+    console.log(address)
     const contracts: any[] = await NftContractMetadata.findAll({
         where: {
             owner: hexStringToBinary(address)

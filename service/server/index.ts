@@ -92,13 +92,14 @@ router.get("/api/creator/data", async (ctx) => {
     ctx.body = DefaultResponse(data)
 })
 
-https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%220x7686e90e058702bd80abf3a10207346f2b963a49%22%7D
-app.use(router.routes());
+// https://zora.co/api/trpc/profile.getProfile?input=%7B%22json%22%3A%220x7686e90e058702bd80abf3a10207346f2b963a49%22%7D
+// app.use(router.routes());
 
-router.get("/api/creator/mintfunData", async (ctx) => {
-    const { owner } = ctx.request.query
-    ctx.body = await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${owner}/details`)
-})
+// router.get("/api/creator/mintfunData", async (ctx) => {
+//     const { owner } = ctx.request.query
+//     console.log(https://mint.fun/api/mintfun/contract/7777777:${owner}/details)
+//     ctx.body = await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${owner}/details`)
+// })
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx)

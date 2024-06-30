@@ -97,9 +97,11 @@ export const getCreatorData = async (address) => {
         const provider = getProvider()
         const collections: any[] = []
         for (let c of contracts) {
+            const mintfun = (await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${binaryToHexString(c.contract)}/details`)).data
             collections.push({
                 metadata: getContractMetadata(binaryToHexString(c.contract), provider),
-                tokens: await getCollectionData(binaryToHexString(c.contract), provider)
+                tokens: await getCollectionData(binaryToHexString(c.contract), provider),
+                mintfun
             })
         }
         return {

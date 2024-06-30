@@ -9,6 +9,7 @@ import { getCreatorData, randomCreators } from '../service/creatorService';
 import { bulkCreateNftTransfers } from '../service/nftLogService';
 import cors from "kcors";
 import { issue } from '../lib/eas';
+import { ethers } from 'ethers';
 const zlib = require('zlib');
 
 dotenv.config();
@@ -93,10 +94,16 @@ router.get("/api/creators/random", async (ctx) => {
 })
 
 router.post("/api/issue", async (ctx) => {
-    const { owner } = ctx.request.body
-    const data = await issue(owner, (await getCreatorData(owner))?.score)
-
-    return ctx.body = DefaultResponse(data)
+    const body = ctx.request.body
+    const { owner } = body
+    console.log(body)
+    if (ethers.isAddress(owner)) {
+        const data = await issue(owner, (await getCreatorData(owner))?.score)
+        return ctx.body = DefaultResponse(data)
+    } else {
+        ctx.body = "invaliid owner"
+        ctx.code = 400
+    }
 })
 
 app.use(router.routes());

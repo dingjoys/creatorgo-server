@@ -302,7 +302,7 @@ export const calcScore = (data) => {
     //     minted
     // }
     // const rawData = await getCreatorData(address)
-    score += (Math.min((data.minted || 0) / 100 * 20, 10))
+    score += (Math.min((data.minted || 0) / 1 * 20, 10))
     score += (Math.min((data.uniqueHolderNumber || 0) / 1000 * 20, 10))
     score += (Math.min((data.whaleNumber || 0) / 10 * 20, 10))
     score += (Math.min((data.creationCounts || 0) / 20 * 20, 10))

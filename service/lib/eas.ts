@@ -35,7 +35,7 @@ export const issue = async (to: hexString, score) => {
     eas.connect(wallet as any);
     const schemaEncoder = new SchemaEncoder("uint256 score");
     const encodedData = schemaEncoder.encodeData([
-        { name: "score", value: score, type: "uint256" },
+        { name: "score", value: Math.floor(score), type: "uint256" },
     ]);
 
     const schemaUID = "0xef2dbf5e8da46ea760bb4c6eb2635bf04adfc1ade6158e594263363db2a55bcf";

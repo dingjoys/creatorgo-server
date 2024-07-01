@@ -65,7 +65,7 @@ group by tmp.owner limit 100) as tmp
 }
 
 export const getCreatorData = async (address) => {
-    const redisKey = `CreatorData-3-${address}`
+    const redisKey = `CreatorData-4-${address}`
     if (await redis.get(redisKey)) {
         return JSON.parse(await redis.get(redisKey))
     }
@@ -96,6 +96,21 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
+        const recentMintersRaw:any = await sequelize.query(`
+            SELECT to, contract
+            FROM (
+                SELECT 
+                    *,
+                    ROW_NUMBER() OVER (PARTITION BY contract ORDER BY (SELECT NULL)) AS rn
+                FROM nft_transfer_1
+                WHERE contract IN (${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")})
+            ) AS ranked
+            WHERE rn <= 5;
+            `)
+
+       const  recentMinters =  recentMintersRaw?.[0]?.map(
+        raw=>({owner:binaryToHexString(raw.to), contract:binaryToHexString(raw.contract)})
+       )
         const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
@@ -178,7 +193,8 @@ export const getCreatorData = async (address) => {
             zora,
             minted,
             creationCounts,
-            activeMintBlockNumber
+            activeMintBlockNumber,
+            recentMinters
         }
         result.score = await calcScore(result)
         await redis.set(redisKey, JSON.stringify(result))

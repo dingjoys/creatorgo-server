@@ -10,6 +10,7 @@ import { bulkCreateNftTransfers } from '../service/nftLogService';
 import cors from "kcors";
 import { issue } from '../lib/eas';
 import { ethers } from 'ethers';
+import bodyparser from 'koa-bodyparser';
 const zlib = require('zlib');
 
 dotenv.config();
@@ -17,7 +18,7 @@ dotenv.config();
 const app = new Koa()
 onerror(app)
 // app.use(compress());
-// app.use(bodyparser())
+app.use(bodyparser())
 app.use(logger())
 app.use(cors());
 

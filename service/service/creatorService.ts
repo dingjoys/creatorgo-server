@@ -97,10 +97,10 @@ export const getCreatorData = async (address) => {
         })
 
         const recentMintersRaw:any = await sequelize.query(`
-            SELECT to, contract
+            SELECT \`to\`, contract
             FROM (
                 SELECT 
-                    *,
+                    to, contract,
                     ROW_NUMBER() OVER (PARTITION BY contract ORDER BY (SELECT NULL)) AS rn
                 FROM nft_transfer_1
                 WHERE contract IN (${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")})

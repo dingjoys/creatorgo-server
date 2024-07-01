@@ -144,6 +144,7 @@ export const getCreatorData = async (address) => {
 
 
         const result = {
+            address,
             uniqueHolderNumber: uniqueMinters.count,
             totalAmount: mintData.reduce((total, curr) => total + curr.total_amount, 0),
             totalMint: mintData.reduce((total, curr) => total + curr.mint_count, 0),

@@ -41,12 +41,18 @@ const getWhales = async () => {
     }
 }
 export const randomCreators = async (offset) => {
-    const owners: any[] = await NftContractMetadata.findAll({
-        attributes: [[literal("distinct(owner)"), "owner"]],
-        order: [fn("rand")],
-        where: { supply: { [Op.gt]: 100 } },
-        raw: true, limit: 5, offset: offset || 0
-    })
+    // const owners: any[] = await NftContractMetadata.findAll({
+    //     attributes: [[literal("distinct(owner)"), "owner"]],
+    //     order: [fn("rand")],
+    //     // where: { supply: { [Op.gt]: 100 } },
+    //     raw: true, limit: 5, offset: offset || 0
+    // })
+
+    const ownersRaw: any = await sequelize.query(`
+        select distinct (owner) from ( select owner from nft_contract_metadata where supply>100 limit 100) as tmp
+        order  by rand()
+        `)
+    const owners = ownersRaw?.[0]
 
     return Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
 }

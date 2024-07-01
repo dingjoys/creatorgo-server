@@ -52,7 +52,7 @@ export const randomCreators = async (offset) => {
         select distinct (owner) from (
         select nft_contract_metadata.owner from nft_contract_metadata left join \`nft_mint_data\` on \`nft_contract_metadata\`.\`contract\` =
          \`nft_mint_data\`.contract
-where nft_mint_data.\`mint_count\` > 100  and \`max_token_id\` <10 order by nft_contract_metadata.id desc limit 100
+where nft_mint_data.\`mint_count\` > 100  and nft_mint_data.max_token_id <10 and nft_mint_data.max_token_id >0 order by nft_contract_metadata.id desc limit 100
 ) as tmp
         order  by rand() limit 5
         `)

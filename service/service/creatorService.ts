@@ -50,7 +50,7 @@ export const randomCreators = async (offset) => {
 
     const ownersRaw: any = await sequelize.query(`
         select distinct (owner) from ( select owner from nft_contract_metadata where supply>100 limit 100) as tmp
-        order  by rand()
+        order  by rand() limit 5
         `)
     const owners = ownersRaw?.[0]
 
@@ -128,12 +128,12 @@ export const getCreatorData = async (address) => {
         const provider = getProvider()
         const collections: any[] = []
         for (let c of contracts) {
-            const mintfun = (await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${binaryToHexString(c.contract)}/details`)).data
-            console.log(binaryToHexString(c.contract))
+            // const mintfun = (await axios.get(`https://mint.fun/api/mintfun/contract/7777777:${binaryToHexString(c.contract)}/details`)).data
+            // console.log(binaryToHexString(c.contract))
             collections.push({
                 // metadata: await getContractMetadata(binaryToHexString(c.contract), provider),
                 tokens: await getCollectionData(binaryToHexString(c.contract), provider),
-                mintfun,
+                // mintfun,
                 contract: binaryToHexString(c.contract)
             })
         }

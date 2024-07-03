@@ -15,6 +15,9 @@ type QuicknodeStreamLogsRawData = {
 export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) => {
     if (raw.length) {
         const data = raw.map(r => {
+            if (r.token_id == "0x") {
+                console.log(r)
+            }
             return {
                 "amount": r.amount,
                 "block_number": r.block_number,

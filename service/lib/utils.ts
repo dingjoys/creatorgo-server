@@ -125,8 +125,8 @@ export const binaryToHexString = (binary: any) => {
 }
 
 export const numberishToBinary = (number: BigNumberish) => {
-  if (BigInt(number.toString()) == BigInt(0))
-    return Buffer.from("")
+  // if (BigInt(number.toString()) == BigInt(0))
+  //   return Buffer.from("")
   const buffer = Buffer.from(
     `${BigInt(number.toString()).toString(16)}`,
     'hex');

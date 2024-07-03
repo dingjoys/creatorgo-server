@@ -1,1 +1,1 @@
-pm2 start --interpreter npx --interpreter-args "ts-node" ./service/server/index.ts --name datalistenerServer
+pm2 start --interpreter npx --interpreter-args "ts-node" ./service/server/index.ts --name creatorgoServer

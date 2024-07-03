@@ -14,14 +14,42 @@ const _main = async () => {
     const NFT_transfer_ABI = [{
         "anonymous": false,
         "inputs": [
-            { "indexed": true, "name": "from", "type": "address" },
-            { "indexed": true, "name": "to", "type": "address" },
-            { "indexed": true, "name": "tokenId", "type": "uint256" },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "operator",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
         ],
-        "name": "Transfer",
-        "type": "event",
+        "name": "TransferSingle",
+        "type": "event"
     }];
-    const topic = "Transfer(address,address,uint256)";
+    // "Transfer(address,address,uint256)";
+    const topic = "TransferSingle(address,address,address,uint256,uint256)";
 
     const options = {
         chains: [0x2105], // list of blockchains to monitor

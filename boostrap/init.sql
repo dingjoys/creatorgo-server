@@ -28,8 +28,8 @@ CREATE TABLE `votings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
  
 
-drop table if exists nft_transfer_1;
- CREATE TABLE `nft_transfer_1` (
+drop table if exists nft_transfer_2;
+ CREATE TABLE `nft_transfer_2` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `from` binary(20) DEFAULT NULL,
   `to` binary(20) DEFAULT NULL,

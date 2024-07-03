@@ -36,5 +36,5 @@ export const NftTransfer = quietSequelize.define("", {
     }
 }, {
     // modelName:"proposals",
-    tableName: "nft_transfer_1"
+    tableName: "nft_transfer_2"
 })

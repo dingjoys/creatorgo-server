@@ -11,7 +11,7 @@ export const syncNewContractInfos = async () => {
 
     const batchSize = 1000
     const contracts = (await sequelize.query(`
-             select distinct contract from nft_transfer_1 limit ${globalCurrentIndex},${batchSize}
+             select distinct contract from nft_transfer_2 limit ${globalCurrentIndex},${batchSize}
         `))?.[0]?.map((c: any) => binaryToHexString(c.contract))
     if (contracts?.length) {
         const existed = (await quietSequelize.query(`

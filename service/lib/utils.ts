@@ -128,7 +128,7 @@ export const numberishToBinary = (number: BigNumberish) => {
   if (BigInt(number.toString()) == BigInt(0))
     return Buffer.from("")
   const buffer = Buffer.from(
-    `${BigInt(number.toString()).toString(16).slice(2)}`,
+    `${BigInt(number.toString()).toString(16)}`,
     'hex');
   return buffer;
 }

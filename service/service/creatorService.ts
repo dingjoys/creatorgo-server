@@ -102,7 +102,7 @@ export const getCreatorData = async (address) => {
                 SELECT 
                     \`to\`, contract,
                     ROW_NUMBER() OVER (PARTITION BY contract ORDER BY (SELECT NULL)) AS rn
-                FROM nft_transfer_1
+                FROM nft_transfer_2
                 WHERE contract IN (${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")})
             ) AS ranked
             WHERE rn <= 5;
@@ -161,13 +161,13 @@ export const getCreatorData = async (address) => {
         }
 
         const creationCounts = (await quietSequelize.query(`
-            select count(*) as \`count\` from (select distinct(token_id) from nft_transfer_1 where 
+            select count(*) as \`count\` from (select distinct(token_id) from nft_transfer_2 where 
             contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 
         const activeMintBlockNumber = (await quietSequelize.query(`
-            select count(*) from (select distinct(block_number) from nft_transfer_1 where 
+            select count(*) from (select distinct(block_number) from nft_transfer_2 where 
             contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count

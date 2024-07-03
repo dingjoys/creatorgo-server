@@ -43,7 +43,7 @@ drop table if exists nft_transfer_2;
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY contract_log (`contract`, log_index),
+  UNIQUE KEY contract_log (`hash`, log_index),
   KEY `index_from` (`from`),
   KEY `index_to` (`to`),
   KEY `index_contract` (`contract`),

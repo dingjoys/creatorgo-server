@@ -29,7 +29,7 @@ export const NftTransfer = sequelize.define("", {
         type: DataTypes.INTEGER,
     },
     token_id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.BLOB,
     },
     log_index: {
         type: DataTypes.INTEGER,

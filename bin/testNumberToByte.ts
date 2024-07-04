@@ -1,3 +1,4 @@
+
 const numberstr = BigInt(("0x55").toString()).toString(16)
 const buffer = Buffer.from(
     "00",
@@ -21,15 +22,21 @@ function numberToTrimmedBytes(num: number): Uint8Array {
 
     return trimmedBytes;
 }
-
+const binaryToNumber = (binary) => {
+    if (!binary || !binary?.length) {
+        return BigInt(0);
+    }
+    return BigInt(`0x${binary.toString('hex')}`);
+}
 const byte2 = numberToTrimmedBytes(0x5)
 console.log(
 
-    numberstr, buffer, buffer.length, 
+    numberstr, buffer, buffer.length,
     buffer.toString('hex'),
     byte2.length,
     Buffer.from(byte2).length,
-    Buffer.from(byte2).toString("hex")
+    Buffer.from(byte2).toString("hex"),
+    binaryToNumber(Buffer.from(byte2).toString("hex"))
     // byte2.toString("hex")
 
 )

@@ -53,7 +53,7 @@ router.post("/webhook/zora", async (ctx) => {
             });
             const data = JSON.parse(body)
             console.log(`inserted: ${data.length} rows`)
-            const lengths = await Promise.all(data.forEach(d => {
+            const lengths = await Promise.all(data.map(d => {
                 return bulkCreateNftTransfers(d)
             }))
             console.log(`inserted: ${lengths} rows`)

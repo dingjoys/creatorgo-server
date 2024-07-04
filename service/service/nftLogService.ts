@@ -31,11 +31,10 @@ export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) 
             }
         })
         try {
-            await NftTransfer.bulkCreate(data, {
+            return await NftTransfer.bulkCreate(data, {
                 ignoreDuplicates: true
             }).then(res => {
                 return data.length
-
             })
         } catch (e) {
             console.error(e)

@@ -39,5 +39,7 @@ export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) 
         } catch (e) {
             console.error(e)
         }
+    } else {
+        return 0    
     }
 }

@@ -34,7 +34,8 @@ export const bulkCreateNftTransfers = async (raw: QuicknodeStreamLogsRawData[]) 
             await NftTransfer.bulkCreate(data, {
                 ignoreDuplicates: true
             }).then(res => {
-                console.log(`inserted: ${data.length} rows`)
+                return data.length
+
             })
         } catch (e) {
             console.error(e)

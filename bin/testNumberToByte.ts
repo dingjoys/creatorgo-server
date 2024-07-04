@@ -4,8 +4,6 @@ const buffer = Buffer.from(
     "00",
     'hex');
 
-
-
 function numberToTrimmedBytes(num: number): Uint8Array {
     const buffer = new ArrayBuffer(4); // 4 bytes for a 32-bit integer
     const view = new DataView(buffer);

@@ -38,7 +38,6 @@ export const syncTokenMetadata = async () => {
                 continue
             }
             try {
-                console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract))
                 const contractObj = new ethers.Contract(binaryToHexString(token.contract), [{
                     "inputs": [
                         {
@@ -84,6 +83,8 @@ export const syncTokenMetadata = async () => {
                         console.log(token)
                     }
                 }
+
+                console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract), metadataUri)
                 await NftTokenMetadata.create({
                     contract: token.contract,
                     token_id: token.token_id,

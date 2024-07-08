@@ -32,7 +32,7 @@ export const syncTokenMetadata = async () => {
         // const notExisted = tokens.filter(c1 => existed.indexOf(c1) == -1)
         for (const token of tokens) {
 
-            console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract))
+            console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract), existed.length)
             if (existed.find(ex => ex.contract == token.contract && ex.token_id == token.token_id)) {
                 const curr = await redis.get(redisKey)
                 console.log(`hit cache - ${parseInt(curr || 224569)}`)

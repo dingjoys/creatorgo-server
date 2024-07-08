@@ -40,7 +40,7 @@ const getWhales = async () => {
         return whales
     }
 }
-export const randomCreators = async (offset) => {
+export const randomCreators = async (limit, offset) => {
     // const owners: any[] = await NftContractMetadata.findAll({
     //     attributes: [[literal("distinct(owner)"), "owner"]],
     //     order: [fn("rand")],
@@ -50,14 +50,14 @@ export const randomCreators = async (offset) => {
 
     const ownersRaw: any = await sequelize.query(`
         select distinct (owner) from (
-        select tmp.*, sum(nft_mint_data.max_token_id) as max_token_id from (select   nft_contract_metadata.owner   from nft_contract_metadata left join nft_mint_data on nft_contract_metadata.contract = nft_mint_data.contract
+        select tmp.*, sum(nft_mint_data.max_token_id) as max_token_id from (select nft_contract_metadata.owner from nft_contract_metadata left join nft_mint_data on nft_contract_metadata.contract = nft_mint_data.contract
 where nft_mint_data.mint_count > 100 
 order by nft_contract_metadata.id desc) as tmp
 join nft_contract_metadata on tmp.owner = nft_contract_metadata.owner
 join nft_mint_data on nft_contract_metadata.contract = nft_mint_data.contract
 where max_token_id<20
 group by tmp.owner limit 100) as tmp
-        order  by rand() limit 5
+        order  by rand() limit ${offset||0},${limit||5}
         `)
     const owners = ownersRaw?.[0]
 

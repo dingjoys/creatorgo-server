@@ -4,11 +4,9 @@ import { quietSequelize, sequelize } from "../model"
 import axios from 'axios'
 import { nftContractMetadata } from "../model/nftContractMetadata"
 
-
-let globalCurrentIndex = 7780
+let globalCurrentIndex = 0
 export const syncNewContractInfos = async () => {
     const provider = getProvider()
-
     const batchSize = 1000
     const contracts = (await sequelize.query(`
              select distinct contract from nft_transfer_2 limit ${globalCurrentIndex},${batchSize}

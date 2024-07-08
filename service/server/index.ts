@@ -89,8 +89,8 @@ router.get("/api/creator/data", async (ctx) => {
 })
 
 router.get("/api/creators/random", async (ctx) => {
-    const { offset } = ctx.request.query
-    const data = await randomCreators(parseInt(offset || "0"))
+    const { limit, offset } = ctx.request.query
+    const data = await randomCreators(parseInt(limit || "0"), parseInt(offset || "0"))
     return ctx.body = DefaultResponse(data)
 })
 

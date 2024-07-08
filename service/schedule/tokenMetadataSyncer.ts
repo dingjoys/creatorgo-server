@@ -5,7 +5,7 @@ import { NftTokenMetadata } from "../model/nftTokenMetadata"
 import { NftTransfer } from "../model/nftTransfer"
 
 export const syncTokenMetadata = async () => {
-    const redisKey = `syncmintdata-3`
+    const redisKey = `syncmintdata-4`
     const provider = getProvider()
 
     const batchSize = 1000
@@ -38,6 +38,7 @@ export const syncTokenMetadata = async () => {
                 continue
             }
             try {
+                console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract))
                 const contractObj = new ethers.Contract(binaryToHexString(token.contract), [{
                     "inputs": [
                         {

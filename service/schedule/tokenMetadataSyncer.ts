@@ -5,7 +5,7 @@ import { NftTokenMetadata } from "../model/nftTokenMetadata"
 import { NftTransfer } from "../model/nftTransfer"
 
 export const syncTokenMetadata = async () => {
-    const redisKey = `syncmintdata-2`
+    const redisKey = `syncmintdata-3`
     const provider = getProvider()
 
     const batchSize = 1000
@@ -16,7 +16,7 @@ export const syncTokenMetadata = async () => {
         },
         raw: true,
         limit: batchSize,
-        offset: (parseInt(await redis.get(redisKey) || 200000))
+        offset: (parseInt(await redis.get(redisKey) || 224569))
     })
     if (tokens?.length) {
         const existed: any[] = await NftTokenMetadata.findAll({
@@ -33,7 +33,7 @@ export const syncTokenMetadata = async () => {
         for (const token of tokens) {
             if (existed.find(ex => ex.contract == token.contract && ex.token_id == token.token_id)) {
                 const curr = await redis.get(redisKey)
-                console.log(`hit cache - ${parseInt(curr || 200000)}`)
+                console.log(`hit cache - ${parseInt(curr || 224569)}`)
                 await redis.set(redisKey, parseInt(curr || 0) + 1)
                 continue
             }
@@ -91,8 +91,8 @@ export const syncTokenMetadata = async () => {
                     ignoreDuplicates: true
                 })
                 const curr = await redis.get(redisKey)
-                await redis.set(redisKey, parseInt(curr || 200000) + 1)
-                console.log(`finished - ${parseInt(curr || 200000)}`)
+                await redis.set(redisKey, parseInt(curr || 224569) + 1)
+                console.log(`finished - ${parseInt(curr || 224569)}`)
             } catch (e) {
                 console.error(e)
                 console.log(`failed - ${token}`)

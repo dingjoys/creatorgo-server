@@ -147,7 +147,7 @@ export const numberishToBinary = (number: BigNumberish) => {
 }
 
 export const binaryToNumber = (binary) => {
-  if (!binary || !binary?.length) {
+  if (!binary || !binary?.length) { 
     return BigInt(0);
   }
   return BigInt(`0x${binary.toString('hex')}`);

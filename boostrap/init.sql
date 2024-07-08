@@ -66,6 +66,20 @@ CREATE TABLE `nft_contract_metadata` (
   KEY `index_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+drop table if exists nft_token_metadata;
+CREATE TABLE `nft_token_metadata` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `contract` binary(20) DEFAULT NULL,
+  `token_id` varbinary(32),
+  `name` varchar(255),
+  `metadataUrl` text,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY index_contract (`contract`, `token_id`),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 drop table if exists nft_mint_data;
 CREATE TABLE `nft_mint_data` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -79,7 +93,6 @@ CREATE TABLE `nft_mint_data` (
   PRIMARY KEY (`id`),
   UNIQUE `index_contract` (`contract`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 create table creator (
   `id` bigint NOT NULL AUTO_INCREMENT,

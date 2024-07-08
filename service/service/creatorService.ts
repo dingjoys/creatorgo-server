@@ -8,6 +8,7 @@ import axios from 'axios'
 import { BigNumberish, ethers } from "ethers";
 import { nftAbi } from "../schedule/contractSyncer";
 import { NftMintData } from "../model/nftMintData";
+import { NftTokenMetadata } from "../model/nftTokenMetadata";
 
 type Creator = {
     address: hexString,
@@ -57,11 +58,11 @@ join nft_contract_metadata on tmp.owner = nft_contract_metadata.owner
 join nft_mint_data on nft_contract_metadata.contract = nft_mint_data.contract
 where max_token_id<20
 group by tmp.owner limit 100) as tmp
-        order  by rand() limit ${offset||0},${limit||5}
+        order  by rand() limit ${offset || 0},${limit || 5}
         `)
     const owners = ownersRaw?.[0]
 
-    return Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
+    const data = await Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
 }
 
 export const getCreatorData = async (address) => {
@@ -96,7 +97,7 @@ export const getCreatorData = async (address) => {
             }, raw: true
         })
 
-        const recentMintersRaw:any = await sequelize.query(`
+        const recentMintersRaw: any = await sequelize.query(`
             SELECT \`to\`, contract
             FROM (
                 SELECT 
@@ -108,9 +109,9 @@ export const getCreatorData = async (address) => {
             WHERE rn <= 5;
             `)
 
-       const  recentMinters =  recentMintersRaw?.[0]?.map(
-        raw=>({owner:binaryToHexString(raw.to), contract:binaryToHexString(raw.contract)})
-       )
+        const recentMinters = recentMintersRaw?.[0]?.map(
+            raw => ({ owner: binaryToHexString(raw.to), contract: binaryToHexString(raw.contract) })
+        )
         const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
@@ -219,6 +220,17 @@ export const getCollectionData = async (contract, provider) => {
         limit: 100000,
         raw: true
     })
+
+    const metadatas: any[] = tokenIds?.length ? (await NftTokenMetadata.findAll({
+        where: {
+            [Op.or]: tokenIds.map(ti => {
+                return {
+                    token_id: ti.token_id,
+                    contract: ti.contract
+                }
+            })
+        }, raw: true
+    })) : []
     const data: any[] = []
     // for (let i = 0; i < 3 && i < tokenIds.length; i++) {
     for (let i = 0; i < tokenIds.length; i++) {
@@ -227,8 +239,10 @@ export const getCollectionData = async (contract, provider) => {
         data.push({
             tokenId: binaryToNumber(tokenIdObj.token_id).toString(),
             total_amount: tokenIdObj.total_amount,
+            metadata: metadatas.find(md => md.contract == tokenIdObj.contract && md.token_id == tokenIdObj.token_id)
         })
     }
+
     return data
 }
 

@@ -92,6 +92,10 @@ export const syncTokenMetadata = async () => {
                 }, {
                     ignoreDuplicates: true
                 })
+                existed.push({
+                    contract: token.contract,
+                    token_id: token.token_id,
+                })
                 const curr = await redis.get(redisKey)
                 await redis.set(redisKey, parseInt(curr || 224569) + 1)
                 console.log(`finished - ${parseInt(curr || 224569)}`)

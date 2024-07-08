@@ -1,23 +1,25 @@
 import { ethers } from "ethers"
-import { Op } from "sequelize"
+import { Op, literal } from "sequelize"
 import { binaryToHexString, binaryToNumber, getProvider, redis } from "../lib/utils"
 import { NftTokenMetadata } from "../model/nftTokenMetadata"
 import { NftTransfer } from "../model/nftTransfer"
 
-
 export const syncTokenMetadata = async () => {
-    const redisKey = `syncmintdata-1`
+    const redisKey = `syncmintdata-2`
     const provider = getProvider()
 
     const batchSize = 1000
     const tokens: any[] = await NftTransfer.findAll({
         attributes: ["contract", "token_id"],
+        where: {
+            [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")],
+        },
         raw: true,
         limit: batchSize,
-        offset: (parseInt(await redis.get(redisKey) || 0))
+        offset: (parseInt(await redis.get(redisKey) || 200000))
     })
     if (tokens?.length) {
-        const existed = await NftTokenMetadata.findAll({
+        const existed: any[] = await NftTokenMetadata.findAll({
             where: {
                 [Op.or]: tokens.map(t => {
                     return {
@@ -27,8 +29,14 @@ export const syncTokenMetadata = async () => {
                 })
             }, raw: true
         })
-        const notExisted = tokens.filter(c1 => existed.indexOf(c1) == -1)
-        for (const token of notExisted) {
+        // const notExisted = tokens.filter(c1 => existed.indexOf(c1) == -1)
+        for (const token of tokens) {
+            if (existed.find(ex => ex.contract == token.contract && ex.token_id == token.token_id)) {
+                const curr = await redis.get(redisKey)
+                console.log(`hit cache - ${parseInt(curr || 200000)}`)
+                await redis.set(redisKey, parseInt(curr || 0) + 1)
+                continue
+            }
             try {
                 const contractObj = new ethers.Contract(binaryToHexString(token.contract), [{
                     "inputs": [
@@ -83,8 +91,8 @@ export const syncTokenMetadata = async () => {
                     ignoreDuplicates: true
                 })
                 const curr = await redis.get(redisKey)
-                await redis.set(redisKey, parseInt(curr || 0) + 1)
-                console.log(`finished - ${parseInt(curr || 0)}`)
+                await redis.set(redisKey, parseInt(curr || 200000) + 1)
+                console.log(`finished - ${parseInt(curr || 200000)}`)
             } catch (e) {
                 console.error(e)
                 console.log(`failed - ${token}`)

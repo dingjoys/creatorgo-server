@@ -14,7 +14,7 @@ export const nftContractMetadata = quietSequelize.define("", {
         type: DataTypes.BLOB,
     },
     owner: { type: DataTypes.BLOB, },
-    earner: { type: DataTypes.BLOB, },
+    // earner: { type: DataTypes.BLOB, },
     metadata: { type: STRING },
 }, {
     // modelName:"proposals",

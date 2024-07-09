@@ -97,7 +97,8 @@ export const getCreatorData = async (address) => {
     if (contracts.length) {
         const mintData: any[] = await NftMintData.findAll({
             where: contracts?.length ? {
-                contract: { [Op.in]: contracts.map(c => c.contract) }
+                [Op.or]: contracts.map(c => { return { contract: c.contract } })
+                // contract: { [Op.in]: contracts.map(c => c.contract) }
             } : {}, raw: true
         })
         console.log(1)
@@ -121,7 +122,9 @@ export const getCreatorData = async (address) => {
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
                 where: {
-                    contract: { [Op.in]: contracts.map(c => c.contract) },
+
+                    [Op.or]: contracts.map(c => { return { contract: c.contract } }),
+                    // contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
                 raw: true, limit: 1000000
@@ -132,7 +135,8 @@ export const getCreatorData = async (address) => {
         const recentMints: any[] = await NftTransfer.findAll(
             {
                 where: {
-                    contract: { [Op.in]: contracts.map(c => c.contract) },
+                    [Op.or]: contracts.map(c => { return { contract: c.contract } }),
+                    // contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
                 raw: true, limit: 10,
@@ -148,7 +152,9 @@ export const getCreatorData = async (address) => {
         const firstMintBlockNumber = ((await NftTransfer.findOne(
             {
                 where: {
-                    contract: { [Op.in]: contracts.map(c => c.contract) },
+
+                    [Op.or]: contracts.map(c => { return { contract: c.contract } }),
+                    // contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
                 raw: true, order: [["id", "asc"]]

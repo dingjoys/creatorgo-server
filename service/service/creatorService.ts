@@ -76,7 +76,8 @@ export const getCreatorData = async (address) => {
 
     const contracts: any[] = await NftContractMetadata.findAll({
         where: {
-            owner: hexStringToBinary(address)
+            owner: hexStringToBinary(address),
+
         }, raw: true
     })
     const minted = await NftTransfer.count({
@@ -99,7 +100,7 @@ export const getCreatorData = async (address) => {
                 contract: { [Op.in]: contracts.map(c => c.contract) }
             } : {}, raw: true
         })
-
+        console.log(1)
         const recentMintersRaw: any = await sequelize.query(`
             SELECT \`to\`, contract
             FROM (
@@ -115,7 +116,7 @@ export const getCreatorData = async (address) => {
         const recentMinters = recentMintersRaw?.[0]?.map(
             raw => ({ owner: binaryToHexString(raw.to), contract: binaryToHexString(raw.contract) })
         )
-        console.log(contracts)
+        console.log(2)
         const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],
@@ -127,6 +128,7 @@ export const getCreatorData = async (address) => {
             }
         )
 
+        console.log(3)
         const recentMints: any[] = await NftTransfer.findAll(
             {
                 where: {
@@ -137,6 +139,7 @@ export const getCreatorData = async (address) => {
                 order: [["id", "desc"]]
             }
         )
+        console.log(4)
         const tmpWhaleAddress = await getWhales()
         const whaleNumber = uniqueMinters.rows.filter((r: any) => {
             return tmpWhaleAddress.indexOf(binaryToHexString(r.owner).toLowerCase()) > -1
@@ -152,6 +155,7 @@ export const getCreatorData = async (address) => {
             }
         )) as any)?.block_number
 
+        console.log(5)
         const provider = getProvider()
         const collections: any[] = []
         for (let c of contracts) {
@@ -165,18 +169,21 @@ export const getCreatorData = async (address) => {
             })
         }
 
+        console.log(6)
         const creationCounts = (await quietSequelize.query(`
             select count(*) as \`count\` from (select distinct(token_id) from nft_transfer_2 where 
             contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 
+        console.log(7)
         const activeMintBlockNumber = (await quietSequelize.query(`
             select count(*) from (select distinct(block_number) from nft_transfer_2 where 
             contract in ( ${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")} )
             ) as tmp
         `) as any)?.[0]?.[0]?.count
 
+        console.log(8)
 
         const result = {
             address,

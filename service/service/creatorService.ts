@@ -27,6 +27,7 @@ type Creator = {
 
 let whales: string[] = []
 const getWhales = async () => {
+    return []
     if (whales.length) {
         return whales
     } else {
@@ -148,18 +149,17 @@ export const getCreatorData = async (address) => {
         const whaleNumber = uniqueMinters.rows.filter((r: any) => {
             return tmpWhaleAddress.indexOf(binaryToHexString(r.owner).toLowerCase()) > -1
         }).length
-
-        const firstMintBlockNumber = ((await NftTransfer.findOne(
+        console.log()
+        const firstMintBlockNumber = (await NftTransfer.findOne(
             {
                 where: {
-
                     [Op.or]: contracts.map(c => { return { contract: c.contract } }),
                     // contract: { [Op.in]: contracts.map(c => c.contract) },
                     [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
                 },
                 raw: true, order: [["id", "asc"]]
             }
-        )) as any)?.block_number
+        ) as any)?.block_number
 
         console.log(5)
         const provider = getProvider()

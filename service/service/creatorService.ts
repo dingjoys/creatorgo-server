@@ -63,6 +63,7 @@ group by tmp.owner limit 100) as tmp
     const owners = ownersRaw?.[0]
 
     const data = await Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
+    return data
 }
 
 export const getCreatorData = async (address) => {
@@ -92,9 +93,9 @@ export const getCreatorData = async (address) => {
 
     if (contracts.length) {
         const mintData: any[] = await NftMintData.findAll({
-            where: {
+            where: contracts?.length ? {
                 contract: { [Op.in]: contracts.map(c => c.contract) }
-            }, raw: true
+            } : {}, raw: true
         })
 
         const recentMintersRaw: any = await sequelize.query(`
@@ -104,7 +105,7 @@ export const getCreatorData = async (address) => {
                     \`to\`, contract,
                     ROW_NUMBER() OVER (PARTITION BY contract ORDER BY (SELECT NULL)) AS rn
                 FROM nft_transfer_2
-                WHERE contract IN (${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")})
+                ${contracts?.length ? `WHERE contract IN (${contracts.map(c => `x'${binaryToHexString(c.contract).substring(2)}'`).join(",")})` : ""}
             ) AS ranked
             WHERE rn <= 5;
             `)

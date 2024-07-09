@@ -4,7 +4,6 @@ import config from "config";
 import { BigNumberish, ethers } from 'ethers';
 import redis from "./redis";
 export { redis };
-
 const fs = require("fs");
 
 export async function sleep(ms: number) {
@@ -29,6 +28,7 @@ export const getProvider = (chain?: any) => {
   return new ethers.JsonRpcProvider(
     "https://rpc-zora-mainnet-0.t.conduit.xyz/A1RqteMBmSBumexysZZz3Lb6gBU4uG1Dc"
   );
+  // https://zora.drpc.org
 };
 
 export const compareIgnoringCase = (str1: string | null, str2: string | null) => {

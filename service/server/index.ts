@@ -81,7 +81,6 @@ router.post("/webhook/zora", async (ctx) => {
         ctx.status = 500
     }
 })
-
 router.get("/api/creator/data", async (ctx) => {
     const { owner } = ctx.request.query
     const data = await getCreatorData(owner)
@@ -96,7 +95,6 @@ router.get("/api/creators/random", async (ctx) => {
 
 router.get("/api/issue", async (ctx) => {
     const { owner } = ctx.request.query
-    console.log(owner)
     if (ethers.isAddress(owner)) {
         const data = await issue(owner, (await getCreatorData(owner))?.score)
         return ctx.body = DefaultResponse(data)

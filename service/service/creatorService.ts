@@ -58,7 +58,7 @@ join nft_contract_metadata on tmp.owner = nft_contract_metadata.owner
 join nft_mint_data on nft_contract_metadata.contract = nft_mint_data.contract
 where max_token_id<20
 group by tmp.owner limit 100) as tmp
-        order  by rand() limit ${offset || 0},${limit || 5}
+        order by rand() limit ${offset || 0},${limit || 5}
         `)
     const owners = ownersRaw?.[0]
 

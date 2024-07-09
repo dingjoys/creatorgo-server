@@ -238,7 +238,7 @@ export const getCollectionData = async (contract, provider) => {
             [Op.or]: tokenIds.map(ti => {
                 return {
                     token_id: ti.token_id,
-                    contract: ti.contract
+                    contract: contract
                 }
             })
         }, raw: true

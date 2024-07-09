@@ -231,7 +231,7 @@ export const getCollectionData = async (contract, provider) => {
         limit: 100000,
         raw: true
     })
-
+    console.log(6.1)
     const metadatas: any[] = tokenIds?.length ? (await NftTokenMetadata.findAll({
         where: {
             [Op.or]: tokenIds.map(ti => {
@@ -242,6 +242,7 @@ export const getCollectionData = async (contract, provider) => {
             })
         }, raw: true
     })) : []
+    console.log(6.2)
     const data: any[] = []
     // for (let i = 0; i < 3 && i < tokenIds.length; i++) {
     for (let i = 0; i < tokenIds.length; i++) {

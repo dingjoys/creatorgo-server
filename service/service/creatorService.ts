@@ -221,6 +221,7 @@ export const getCreatorData = async (address) => {
 }
 
 export const getCollectionData = async (contract, provider) => {
+    console.log(6.0)
     const tokenIds: any = await NftTransfer.findAll({
         attributes: ["token_id", [literal("sum(amount)"), "total_amount"]],
         where: {

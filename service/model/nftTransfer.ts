@@ -3,7 +3,7 @@
 import { DataTypes } from "sequelize";
 import { quietSequelize, sequelize } from ".";
 
-export const NftTransfer = quietSequelize.define("", {
+export const NftTransfer = sequelize.define("", {
     id: {
         allowNull: false,
         autoIncrement: true,

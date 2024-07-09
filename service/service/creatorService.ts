@@ -62,7 +62,9 @@ group by tmp.owner limit 100) as tmp
         `)
     const owners = ownersRaw?.[0]
 
-    const data = await Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner))))
+    const data = await Promise.all(owners?.map(o => getCreatorData(binaryToHexString(o.owner)))).then(d => d).catch(es => {
+        console.log(es)
+    })
     return data
 }
 
@@ -113,6 +115,7 @@ export const getCreatorData = async (address) => {
         const recentMinters = recentMintersRaw?.[0]?.map(
             raw => ({ owner: binaryToHexString(raw.to), contract: binaryToHexString(raw.contract) })
         )
+        console.log(contracts)
         const uniqueMinters = await NftTransfer.findAndCountAll(
             {
                 attributes: [[literal("distinct(`to`)"), "owner"]],

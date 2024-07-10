@@ -25,8 +25,11 @@ export function loadJSONData(filePath) {
 }
 
 export const getProvider = (chain?: any) => {
+  // return new ethers.JsonRpcProvider(
+  //   "https://rpc-zora-mainnet-0.t.conduit.xyz/A1RqteMBmSBumexysZZz3Lb6gBU4uG1Dc"
+  // );
   return new ethers.JsonRpcProvider(
-    "https://rpc-zora-mainnet-0.t.conduit.xyz/A1RqteMBmSBumexysZZz3Lb6gBU4uG1Dc"
+    "http://127.0.0.1:8545"
   );
   // https://zora.drpc.org
 };
@@ -147,7 +150,7 @@ export const numberishToBinary = (number: BigNumberish) => {
 }
 
 export const binaryToNumber = (binary) => {
-  if (!binary || !binary?.length) { 
+  if (!binary || !binary?.length) {
     return BigInt(0);
   }
   return BigInt(`0x${binary.toString('hex')}`);

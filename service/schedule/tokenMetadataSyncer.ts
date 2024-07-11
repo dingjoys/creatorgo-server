@@ -11,7 +11,7 @@ export const syncTokenMetadata = async () => {
 
     const batchSize = 1000
     const tokens: any[] = await NftTransfer.findAll({
-        attributes: ["contract", "token_id"],
+        attributes: ["contract", "token_id", "block_number"],
         where: {
             [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")],
         },
@@ -33,7 +33,9 @@ export const syncTokenMetadata = async () => {
         // const notExisted = tokens.filter(c1 => existed.indexOf(c1) == -1)
         const result: any = []
         for (const token of tokens) {
-
+            if (token.block_number > 3670148) {
+                throw new Error("wait for syncing")
+            }
             // console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract), existed.length ? existed[existed.length - 1] : null)
             if (existed.find(ex => ex.contract.equals(token.contract) && ex.token_id.equals(token.token_id))) {
                 const curr = await redis.get(redisKey)
@@ -98,6 +100,7 @@ export const syncTokenMetadata = async () => {
                     contract: token.contract,
                     token_id: token.token_id,
                 })
+
             } catch (e) {
                 console.error(e)
                 console.log(`failed - ${token}`)

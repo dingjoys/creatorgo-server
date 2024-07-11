@@ -3,6 +3,7 @@ import { Op, literal } from "sequelize"
 import { binaryToHexString, binaryToNumber, getProvider, redis } from "../lib/utils"
 import { NftTokenMetadata } from "../model/nftTokenMetadata"
 import { NftTransfer } from "../model/nftTransfer"
+import moment from "moment"
 
 export const syncTokenMetadata = async () => {
     const redisKey = `syncmintdata-4`
@@ -30,12 +31,13 @@ export const syncTokenMetadata = async () => {
             }, raw: true
         })
         // const notExisted = tokens.filter(c1 => existed.indexOf(c1) == -1)
+        const result: any = []
         for (const token of tokens) {
 
             // console.log(binaryToNumber(token.token_id), binaryToHexString(token.contract), existed.length ? existed[existed.length - 1] : null)
             if (existed.find(ex => ex.contract.equals(token.contract) && ex.token_id.equals(token.token_id))) {
                 const curr = await redis.get(redisKey)
-                console.log(`hit cache - ${parseInt(curr || 224569)}`)
+                // console.log(`hit cache - ${parseInt(curr || 224569)}`)
                 await redis.set(redisKey, parseInt(curr || 0) + 1)
                 continue
             }
@@ -85,26 +87,27 @@ export const syncTokenMetadata = async () => {
                         console.log(token)
                     }
                 }
-
-                await NftTokenMetadata.create({
-                    contract: token.contract,
-                    token_id: token.token_id,
-                    metadataUrl: metadataUri
-                }, {
-                    ignoreDuplicates: true
-                })
+                // await NftTokenMetadata.create({
+                //     contract: token.contract,
+                //     token_id: token.token_id,
+                //     metadataUrl: metadataUri
+                // }, {
+                //     ignoreDuplicates: true
+                // })
                 existed.push({
                     contract: token.contract,
                     token_id: token.token_id,
                 })
-                const curr = await redis.get(redisKey)
-                await redis.set(redisKey, parseInt(curr || 224569) + 1)
-                console.log(`finished - ${parseInt(curr || 224569)}`)
             } catch (e) {
                 console.error(e)
                 console.log(`failed - ${token}`)
             }
         }
+        await NftTokenMetadata.bulkCreate(result, { ignoreDuplicates: true })
+
+        const curr = await redis.get(redisKey)
+        await redis.set(redisKey, parseInt(curr || 224569) + batchSize)
+        console.log(`${moment().format()}-finished - ${parseInt(curr || 224569) + batchSize}`)
         return true
     } else {
         return false

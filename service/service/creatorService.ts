@@ -83,10 +83,11 @@ export const getCreatorData = async (address) => {
     })
     const minted = await NftTransfer.count({
         where: {
-            to: binaryToHexString(address),
+            to: hexStringToBinary(address),
             [Op.and]: [literal("`from`=x'0000000000000000000000000000000000000000'")]
         },
     })
+    console.log(minted)
     let zora = {}
     try {
         zora = (await axios.get(`https://zora.co/api/profiles/${ethers.getAddress(address)}?expandedData=true`)).data
